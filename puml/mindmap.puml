@@ -1,0 +1,42 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+* mob
+  right side
+  * start branch_name
+    * Local and remove exist and are in sync
+      * download the remote
+      * pull the local up to the remote
+      * read the mob-file from root directory
+      * start the timer
+      * show the message with the name of the driver and the navigator
+    * local exist and remote does not
+      * fail with a message: "branch X already exist"
+    * local exist and it's ahead of remote
+      * fail with message: "local branch is ahead of remote"
+    * local and remote does not exist
+      * ask for the name of the team members in the session
+      * create local branch
+      * create mob file in the root directory
+      * push it
+      * start timer
+      * show message with the name of the driver and the navigator
+  left side
+  * next
+    * FAIL: if the mob file does not exist
+    * FAIL: if remote is ahead of the local branch
+    * update the mob file with the name of the next driver
+    * add all changes and commit skipping hooks
+    * push all changes to remote
+    * show confirmation message
+  * done
+    * FAIL if the mob file does not exist
+    * FAIL if the origin is out of sync
+    * move the mob file to .git folder to be used in another session
+    * delete the local mob file
+    * commit skip hooks
+    * squash all commits
+    * commit with hooks
+    * push all changes to remote with -f
+    * print message of success
+@endmindmap

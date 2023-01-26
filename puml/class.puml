@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface MobSession {
+  start(branch_name, [team_members])
+  next()
+  end()
+}
+
+interface MobFile
+
+interface MobSessionState {
+  createMobFile(): ?MobFile
+  addTeamMember()
+}
+
+@enduml
