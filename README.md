@@ -35,11 +35,6 @@ pipenv run mob
 
 # TODO's (brainstorm)
 
-This TODO's (brainstorm) and the diagrams are here only because of my colleague [@zsparal](https://github.com/zsparal).
-Thanks
-dude!
-❤️
-
 ## The following is pretty much a draft of the idea for this project - Don't take it as written in stone
 
 ### Usage
