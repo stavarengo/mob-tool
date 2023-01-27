@@ -9,9 +9,12 @@ class InvalidGitRepoDir(Exception):
 
 
 @dataclass(frozen=True)
-class LocalGitRepoDir:
+class LocalGitRepoDir(os.PathLike):
     path: str
 
     def __post_init__(self):
         if not os.path.exists(f'{self.path}/.git'):
             raise InvalidGitRepoDir.create(self.path)
+
+    def __fspath__(self) -> str:
+        return self.path

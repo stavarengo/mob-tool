@@ -19,7 +19,7 @@ setup(
     keywords="mob mob-programming timer mob-programming-timer cli-tool remote-mob-programming remote-mobs",
     package_dir={"": "src"},
     packages=find_packages(where="src"),  # Required
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={  # Optional
         "console_scripts": [
             "mob=mob.commands:cli",
