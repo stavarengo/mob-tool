@@ -33,3 +33,9 @@ class TestBranchName(unittest.TestCase):
                     self.assertEqual(BranchName(name1), BranchName(name2))
                 else:
                     self.assertNotEqual(BranchName(name1), BranchName(name2))
+
+    def test_is_immutable(self):
+        branch_name = BranchName("name")
+        with self.assertRaises(AttributeError):
+            # noinspection PyDataclass
+            branch_name.branch_name = "another"
