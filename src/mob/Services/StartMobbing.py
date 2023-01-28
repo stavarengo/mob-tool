@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from mob.git_wrapper.git_wrapper_abstract import GitWrapperAbstract
-from mob.services.branch_name import BranchName
+from mob.GitWrapper.GitWrapperAbstract import GitWrapperAbstract
+from mob.Services.BranchName import BranchName
 
 
 class BranchAlreadyExistsAndIsNotMobBranch(Exception):

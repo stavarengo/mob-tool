@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import git
 
-from mob.services.local_git_repo_dir import LocalGitRepoDir
+from mob.Services.LocalGitRepoDir import LocalGitRepoDir
 
 
 class MobProgrammingAbstract(ABC):

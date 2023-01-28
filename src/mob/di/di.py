@@ -1,7 +1,7 @@
 from injector import Injector, singleton
 
-from mob.git_wrapper.git_wrapper import GitWrapper
-from mob.git_wrapper.git_wrapper_abstract import GitWrapperAbstract
+from mob.GitWrapper.GitWrapper import GitWrapper
+from mob.GitWrapper.GitWrapperAbstract import GitWrapperAbstract
 
 
 def configure(binder):

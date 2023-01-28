@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from git import Repo
 
-from mob.git_wrapper.git_wrapper_abstract import GitWrapperAbstract, WorkingDirectoryNotClean
-from mob.services.branch_name import BranchName
+from mob.GitWrapper.GitWrapperAbstract import GitWrapperAbstract, WorkingDirectoryNotClean
+from mob.Services.BranchName import BranchName
 
 
 @dataclass(frozen=True)

@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import MagicMock
 
-from mob.git_wrapper.git_wrapper import GitWrapper
-from mob.services.start_mobbing import StartMobbing, WorkingDirectoryNotClean
+from mob.GitWrapper.GitWrapper import GitWrapper
+from mob.GitWrapper.GitWrapperAbstract import WorkingDirectoryNotClean
+from mob.Services.StartMobbing import StartMobbing
 
 
 class TestStartMobbing(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from mob.services.local_git_repo_dir import LocalGitRepoDir, InvalidGitRepoDir
+from mob.Services.LocalGitRepoDir import LocalGitRepoDir, InvalidGitRepoDir
 
 
 class TestLocalGitRepoDir(unittest.TestCase):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from mob.services.branch_name import BranchName
+from mob.Services.BranchName import BranchName
 
 
 class WorkingDirectoryNotClean(Exception):

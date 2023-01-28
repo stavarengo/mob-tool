@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from git import Repo
 
-from mob.git_wrapper.git_wrapper import GitWrapper
+from mob.GitWrapper.GitWrapper import GitWrapper
 
 
 class TestGitWrapper(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 
-from mob.services.branch_name import BranchName
+from mob.Services.BranchName import BranchName
 
 
 class TestBranchName(unittest.TestCase):
