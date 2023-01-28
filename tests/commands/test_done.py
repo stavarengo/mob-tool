@@ -2,7 +2,7 @@ import unittest
 
 from click.testing import CliRunner
 
-from mob.commands import done
+from mob.cli_commands import done
 
 
 class TestStartCommand(unittest.TestCase):

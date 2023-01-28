@@ -2,7 +2,7 @@ import unittest
 
 from click.testing import CliRunner
 
-from mob.commands.cli import cli
+from mob.cli_commands.cli import cli
 
 
 class TestCLI(unittest.TestCase):

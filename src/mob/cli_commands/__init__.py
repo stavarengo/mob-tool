@@ -1,8 +1,8 @@
 import click
 
-from mob.commands.done import done
-from mob.commands.next import next
-from mob.commands.start import start
+from mob.cli_commands.done import done
+from mob.cli_commands.next import next
+from mob.cli_commands.start import start
 
 
 @click.group()

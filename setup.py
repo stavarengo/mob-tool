@@ -22,7 +22,7 @@ setup(
     python_requires=">=3.7",
     entry_points={  # Optional
         "console_scripts": [
-            "mob=mob.commands:cli",
+            "mob=mob.cli_commands:cli",
         ],
     },
     project_urls={  # Optional
