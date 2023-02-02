@@ -1,8 +1,10 @@
 import os
 from dataclasses import dataclass
 
+from mob.MobException import MobException
 
-class InvalidGitRepoDir(Exception):
+
+class InvalidGitRepoDir(MobException):
     @classmethod
     def create(cls, path: str):
         return cls(f'The directory "{path}" is not a valid repository directory.')
