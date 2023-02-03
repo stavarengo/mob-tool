@@ -1,11 +1,5 @@
-from injector import Injector, singleton
+from injector import Injector
 
-from mob.GitWrapper.GitWrapper import GitWrapper
-from mob.GitWrapper.GitWrapperAbstract import GitWrapperAbstract
+from mob.GitCli.Module import Module
 
-
-def configure(binder):
-    binder.bind(GitWrapperAbstract, to=GitWrapper, scope=singleton)
-
-
-di = Injector([configure])
+di = Injector([Module])

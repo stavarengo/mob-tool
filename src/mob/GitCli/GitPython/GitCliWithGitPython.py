@@ -1,63 +1,21 @@
 from dataclasses import dataclass
 
-from git import Repo, GitCommandError
+from git import Repo
+from injector import inject
 
-from mob.GitWrapper.GitWrapperAbstract import GitWrapperAbstract, WorkingDirectoryNotClean, NotMobBranch, UndoCommand, \
-    ComposedUndoCommand
-from mob.MobException import MobException
+from mob.GitCli.Exceptions import NotMobBranch, WorkingDirectoryNotClean
+from mob.GitCli.GitCliInterface import GitCliInterface, UndoCommand
+from mob.GitCli.GitPython.UndoCommands.UndoCheckout import UndoCheckout
+from mob.GitCli.GitPython.UndoCommands.UndoCommitAndPushEverything import UndoCommitAndPushEverything
+from mob.GitCli.GitPython.UndoCommands.UndoCreateHead import UndoCreateHead
+from mob.GitCli.UndoCommands.UndoCommand import ComposedUndoCommand
 from mob.Services.BranchName import BranchName
 from mob.Services.MobData import MobData
 
 
-class MainBranchNotFound(MobException):
-    @classmethod
-    def create(cls, branch_names: list[BranchName]):
-        return cls(f"Main branch not found. We tried branches named: {', '.join([str(bn) for bn in branch_names])}.")
-
-
+@inject
 @dataclass(frozen=True)
-class UndoCheckout(UndoCommand):
-    repo: Repo
-    original_branch: BranchName
-
-    def undo(self):
-        self.repo.git.checkout(self.original_branch)
-
-
-@dataclass(frozen=True)
-class UndoCreateHead(UndoCommand):
-    repo: Repo
-    branch_name: BranchName
-
-    def undo(self):
-        self.repo.git.branch("-D", self.branch_name)
-
-
-@dataclass(frozen=True)
-class UndoCreateNewBranch(UndoCommand):
-    repo: Repo
-    branch_name: BranchName
-
-    def undo(self):
-        try:
-            self.repo.git.push("origin", "--delete", self.branch_name)
-        except GitCommandError as e:
-            if "remote ref does not exist" not in str(e):
-                raise e
-        self.repo.git.branch("-D", self.branch_name)
-
-
-@dataclass(frozen=True)
-class UndoCommitAndPushEverything(UndoCommand):
-    repo: Repo
-
-    def undo(self):
-        self.repo.git.reset('HEAD^ --soft')
-        self.repo.git.push("-f")
-
-
-@dataclass(frozen=True)
-class GitWrapper(GitWrapperAbstract):
+class GitCliWithGitPython(GitCliInterface):
     repo: Repo
     MOB_FILE_NAME: str = '.mob.json'
 
@@ -129,7 +87,7 @@ class GitWrapper(GitWrapperAbstract):
 
     def __fail_if_not_mob_branch(self):
         if not self.__is_mob_branch():
-            raise NotMobBranch.create()
+            raise NotMobBranch.create(self.__get_current_branch_name_or_sha_if_detached())
 
     def __fail_if_dirty(self):
         if self.repo.is_dirty():
@@ -153,8 +111,3 @@ class GitWrapper(GitWrapperAbstract):
         self.repo.git.commit('-m', message)
         self.repo.git.push("origin", self.repo.active_branch.name, "--set-upstream")
         return UndoCommitAndPushEverything(self.repo)
-
-    # def __create_local_branch_from_origin_main(self, new_branch: BranchName):
-    #     self.repo.git.fetch('--all')
-    #     self.repo.create_head(new_branch, f'origin/{self.get_main_branch_name()}')
-    #     return UndoCreateHead(new_branch)
