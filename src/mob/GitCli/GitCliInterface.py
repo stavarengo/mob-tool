@@ -27,5 +27,6 @@ class GitCliInterface(ABC):
     def create_new_mob_branch(self, branch_name: BranchName, mob_data: MobData) -> UndoCommand:
         pass
 
+    @abstractmethod
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         pass

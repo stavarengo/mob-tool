@@ -11,7 +11,9 @@ class ComposedUndoCommand(UndoCommand):
         for command in reversed(self.__commands):
             command.undo()
 
-    def with_command(self, command: UndoCommand) -> 'ComposedUndoCommand':
+        self.__commands.clear()
+
+    def add_command(self, command: UndoCommand) -> 'ComposedUndoCommand':
         self.__commands.append(command)
         return self
 

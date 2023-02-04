@@ -33,11 +33,18 @@ To install the package, you need to have python 3.7 or later installed.
 pip install mob
 ```
 
-## What changes the tool makes in my repository
+## What changes does the tool make in my repository?
 
 - It creates a file called `.mob.last_team.json` and marks it to be ignored by Git (`.git/info/exclude`). This does not
   affect the repository in any way, but it allows the tool to keep track of the team members that were used in the last
   session.
+
+It's work mentioning that the tool will never change anything in the main branch. It will always create a new branch
+where the mob team will be working on.
+
+The tool keeps tracks of the changes made in the repository (eg, checkout, commit, etc) and reverts all the changes
+in case of an error. This means that the tool will never leave the repository in a dirty state. See the
+file `src/mob/GitCli/GitCliWithAutoRollback.py` for more details.
 
 ## How will this work (when the app is finished)
 

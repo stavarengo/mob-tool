@@ -55,12 +55,12 @@ class GitCliWithGitPython(GitCliInterface):
 
         self.repo.git.fetch('--all')
         self.repo.create_head(branch_name, f'origin/{self.__get_main_branch_name()}')
-        undo_command = undo_command.with_command(UndoCreateHead(self.repo, branch_name))
+        undo_command = undo_command.add_command(UndoCreateHead(self.repo, branch_name))
         try:
             self.repo.git.checkout(branch_name)
-            undo_command = undo_command.with_command(UndoCheckout(self.repo, original_branch))
+            undo_command = undo_command.add_command(UndoCheckout(self.repo, original_branch))
             mob_data.save_to_file(self.__mob_file_path())
-            undo_command = undo_command.with_command(self.__commit_and_push_everything("WIP mob: start session"))
+            undo_command = undo_command.add_command(self.__commit_and_push_everything("WIP mob: start session"))
         except Exception as e:
             undo_command.undo()
             raise e
