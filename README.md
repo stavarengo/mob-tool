@@ -33,6 +33,12 @@ To install the package, you need to have python 3.7 or later installed.
 pip install mob
 ```
 
+## What changes the tool makes in my repository
+
+- It creates a file called `.mob.last_team.json` and marks it to be ignored by Git (`.git/info/exclude`). This does not
+  affect the repository in any way, but it allows the tool to keep track of the team members that were used in the last
+  session.
+
 ## How will this work (when the app is finished)
 
 A developer can start a Mob Programming session by typing `mob start BRANCH_NAME teammember1,teammember2,...` in the

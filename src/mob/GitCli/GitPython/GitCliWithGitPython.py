@@ -5,6 +5,7 @@ from injector import inject
 
 from mob.GitCli.Exceptions import NotMobBranch, WorkingDirectoryNotClean
 from mob.GitCli.GitCliInterface import GitCliInterface, UndoCommand
+from mob.GitCli.GitPython.UndoCommands.UndoAddFileToGitInfoExclude import UndoAddFileToGitInfoExclude
 from mob.GitCli.GitPython.UndoCommands.UndoCheckout import UndoCheckout
 from mob.GitCli.GitPython.UndoCommands.UndoCommitAndPushEverything import UndoCommitAndPushEverything
 from mob.GitCli.GitPython.UndoCommands.UndoCreateHead import UndoCreateHead
@@ -65,6 +66,23 @@ class GitCliWithGitPython(GitCliInterface):
             raise e
 
         return undo_command
+
+    def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
+        file_path = f'{self.repo.git_dir}/info/exclude'
+        try:
+            with open(file_path, 'r') as f:
+                entries = f.readlines()
+        except FileNotFoundError:
+            entries = []
+
+        new_entry = f"{new_entry.replace(self.repo.working_dir, '')}\n"
+        if new_entry not in entries:
+            with open(file_path, 'w') as f:
+                entries.append(new_entry)
+                f.write(''.join(entries))
+                return UndoAddFileToGitInfoExclude(self.repo, new_entry)
+
+        return UndoCommand.empty()
 
     def __get_current_branch_name_or_sha_if_detached(self) -> BranchName:
         return BranchName(self.repo.active_branch.name or self.repo.active_branch.commit.hexsha)

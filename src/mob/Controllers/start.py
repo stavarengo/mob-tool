@@ -1,52 +1,57 @@
-import json
-import os
-
 import click
-from git import repo
 
-from mob.GitCli.GitPython.GitCliWithGitPython import GitCliWithGitPython
+from mob.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
+from mob.LastTeamMembers.TeamMemberName import TeamMemberName
+from mob.LastTeamMembers.TeamMembers import TeamMembers
 from mob.MobSession.StartMobbing import StartMobbing
 from mob.Services.BranchName import BranchName
+from mob.di import di
+
+
+def __get_team_members() -> TeamMembers:
+    click.echo('Name of the team members. One per line. Minimum two.')
+
+    members = []
+    while True:
+        member = click.prompt('Name (empty to stop asking)', default='').strip()
+        if not member:
+            break
+        members.append(member)
+
+    return TeamMembers(members)
 
 
 @click.command(name='start')
 @click.argument('branch_name')
 @click.option(
-    '--reset-members',
+    '--members',
     '-m',
-    help='Ask for the team members again, instead of using the last one.',
+    help='List of names separated by comma',
 )
-def start(branch_name: BranchName, reset_members: bool = False) -> None:
+@click.option(
+    '--reset-members',
+    '-r',
+    help='Force to ask for the team members again',
+)
+def start(branch_name: BranchName, members: str = None, reset_members: bool = False) -> None:
     """
     It will start a new mob session if BRANCH_NAME doesn't exit, or will continue a previous session if the BRANCH_NAME
     exists.
     """
+    last_team_members_service = di.get(LastTeamMembersService)
+    if members:
+        members = [TeamMemberName(n.strip()) for n in members.split(',') if n and n.strip()]
 
-    members = []
-    last_team_filename = f'{repo.git_dir}/.mob.last_team.json'
+    if members is None:
+        members = last_team_members_service.get_last_team()
+    else:
+        last_team_members_service.save_last_team(members)
 
-    if not reset_members:
-        if os.path.exists(last_team_filename):
-            with open(last_team_filename, 'r') as f:
-                members = json.loads(f.read())
-
-    need_to_rewrite_last_team_file = False
-    if not members or len(members) < 3:
-        need_to_rewrite_last_team_file = True
+    if reset_members:
         members = []
-        while True:
-            member = click.prompt('', prompt_suffix='', default='').strip()
-            if not member:
-                break
-            members.append(member)
 
-    if not members or len(members) < 3:
-        click.echo('You must provide at least tree members.')
-        return
+    if not members:
+        members = __get_team_members()
+        last_team_members_service.save_last_team(members)
 
-    if need_to_rewrite_last_team_file:
-        with open(last_team_filename, 'w') as f:
-            f.write(json.dumps(members))
-
-    git = GitCliWithGitPython(repo)
-    StartMobbing(git).start(BranchName(branch_name), members)
+    di.get(StartMobbing).start(branch_name, members)

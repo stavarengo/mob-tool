@@ -16,7 +16,7 @@ class StartMobbing:
     git: GitCliInterface
     __undo_command: ComposedUndoCommand = ComposedUndoCommand.empty()
 
-    def start(self, branch_name: BranchName, team: list[str]):
+    def start(self, branch_name: BranchName, team: TeamMembers):
         try:
             exists = self.git.branch_exists(branch_name)
             if exists:

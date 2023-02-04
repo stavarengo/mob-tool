@@ -1,26 +1,23 @@
-import json
 from dataclasses import dataclass
 
 from injector import inject
 
+from mob.GitCli.GitCliInterface import GitCliInterface
 from mob.LastTeamMembers.LastTeamMembersRepository import LastTeamMembersRepository
 from mob.LastTeamMembers.TeamMembers import TeamMembers
+from mob.MobSecrets import MobSecrets
 
 
 @inject
 @dataclass
 class LastTeamMembersService:
     repository: LastTeamMembersRepository
+    git: GitCliInterface
+    secrets: MobSecrets
 
-    def get_last_team(self) -> TeamMembers:
+    def get_last_team(self) -> TeamMembers | None:
         return self.repository.load_team()
 
     def save_last_team(self, members: TeamMembers):
-        self.__validate_team(members)
-        with open(self.repository.filename, 'w') as f:
-            f.write(json.dumps(members.__dict__))
-
-    @staticmethod
-    def __validate_team(members: TeamMembers | None) -> None:
-        if not members or members.len < 3:
-            raise ValueError('You must provide at least three members.')
+        self.repository.save_team(members)
+        self.git.add_to_git_info_exclude(self.secrets.last_team_members_file_path())
