@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional
 
 from dataclasses_json import dataclass_json
 
+from mob.LastTeamMembers.TeamMembers import TeamMembers
 from mob.Services.BranchName import BranchName
 
 
@@ -16,17 +17,9 @@ class MobDataRotation:
 
 @dataclass_json
 @dataclass(frozen=True)
-class MobDataTeam:
-    driver: str
-    navigator: str
-    restOfTheTeam: List[str]
-
-
-@dataclass_json
-@dataclass(frozen=True)
 class MobDataSession:
     branch: Optional[BranchName]
-    team: MobDataTeam
+    team: TeamMembers
     rotation: MobDataRotation
 
 
@@ -37,7 +30,7 @@ class MobData:
     version: str = '0.1.0'
 
     @staticmethod
-    def create(branch: BranchName, team: MobDataTeam) -> 'MobData':
+    def create(branch: BranchName, team: TeamMembers) -> 'MobData':
         return MobData(MobDataSession(branch, team, MobDataRotation()))
 
     @staticmethod

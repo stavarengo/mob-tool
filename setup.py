@@ -1,31 +1,29 @@
 import pathlib
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 here = pathlib.Path(__file__).parent.resolve()
 
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-print(find_packages(where="src"))
-
 setup(
     name="mob",
-    version="0.1.0",  # Required
-    description="Mob handover tool",  # Optional
-    long_description=long_description,  # Optional
-    long_description_content_type="text/markdown",  # Optional (see note above)
-    url="https://github.com/stavarengo/mob",  # Optional
-    author="rfst",  # Optional
+    version="0.1.0",
+    description="Mob handover tool",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/stavarengo/mob",
+    author="rfst",
     keywords="mob mob-programming timer mob-programming-timer cli-tool remote-mob-programming remote-mobs",
     package_dir={"": "src"},
-    packages=find_packages(where="src"),  # Required
+    packages=find_packages(where="src"),
     python_requires=">=3.7",
-    entry_points={  # Optional
+    entry_points={
         "console_scripts": [
-            "mob=mob.cli_commands:cli",
+            "mob=mob.Controllers:cli",
         ],
     },
-    project_urls={  # Optional
+    project_urls={
         "Say Thanks!": "https://saythanks.io/to/faelsta",
         "Source": "https://github.com/stavarengo/stavarengo/",
     },

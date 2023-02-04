@@ -8,7 +8,7 @@ from mob.GitCli.GitCliInterface import GitCliInterface, UndoCommand
 from mob.GitCli.GitPython.UndoCommands.UndoCheckout import UndoCheckout
 from mob.GitCli.GitPython.UndoCommands.UndoCommitAndPushEverything import UndoCommitAndPushEverything
 from mob.GitCli.GitPython.UndoCommands.UndoCreateHead import UndoCreateHead
-from mob.GitCli.UndoCommands.UndoCommand import ComposedUndoCommand
+from mob.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
 from mob.Services.BranchName import BranchName
 from mob.Services.MobData import MobData
 

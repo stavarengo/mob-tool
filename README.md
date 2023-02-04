@@ -92,7 +92,7 @@ class MobDataRotation(TypedDict):
 
 
 @dataclass(frozen=True)
-class MobDataTeam(TypedDict):
+class TeamMembers(TypedDict):
     driver: str
     navigator: str
     restOfTheTeam: Tuple[str, ...]
@@ -101,7 +101,7 @@ class MobDataTeam(TypedDict):
 @dataclass(frozen=True)
 class MobDataSession(TypedDict):
     branch: Optional[str]
-    team: MobDataTeam
+    team: TeamMembers
     rotation: MobDataRotation
 
 
