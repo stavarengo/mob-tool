@@ -12,3 +12,6 @@ class MobSecrets(str):
 
     def last_team_members_file_path(self):
         return f'{self.work_dir}/.mob.last_team.json'
+
+    def settings_file_path(self):
+        return f'{self.work_dir}/.mob.settings.json'

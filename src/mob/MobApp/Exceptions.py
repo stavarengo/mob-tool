@@ -1,5 +1,6 @@
+from mob.GitCli.BranchName import BranchName
+
 from mob.MobException import MobException
-from mob.Services.BranchName import BranchName
 
 
 class BranchAlreadyExistsAndIsNotMobBranch(MobException):

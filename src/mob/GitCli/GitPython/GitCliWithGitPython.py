@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from git import Repo
 from injector import inject
 
+from mob.GitCli.BranchName import BranchName
 from mob.GitCli.Exceptions import NotMobBranch, WorkingDirectoryNotClean
 from mob.GitCli.GitCliInterface import GitCliInterface, UndoCommand
 from mob.GitCli.GitPython.UndoCommands.UndoAddFileToGitInfoExclude import UndoAddFileToGitInfoExclude
@@ -10,8 +11,7 @@ from mob.GitCli.GitPython.UndoCommands.UndoCheckout import UndoCheckout
 from mob.GitCli.GitPython.UndoCommands.UndoCommitAndPushEverything import UndoCommitAndPushEverything
 from mob.GitCli.GitPython.UndoCommands.UndoCreateHead import UndoCreateHead
 from mob.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
-from mob.Services.BranchName import BranchName
-from mob.Services.MobData import MobData
+from mob.SessionSettings.SessionSettings import SessionSettings
 
 
 @inject
@@ -47,7 +47,7 @@ class GitCliWithGitPython(GitCliInterface):
             raise e
         return undo_checkout
 
-    def create_new_mob_branch(self, branch_name: BranchName, mob_data: MobData) -> UndoCommand:
+    def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
         self.__fail_if_dirty()
 
         undo_command = ComposedUndoCommand([])
@@ -55,12 +55,10 @@ class GitCliWithGitPython(GitCliInterface):
 
         self.repo.git.fetch('--all')
         self.repo.create_head(branch_name, f'origin/{self.__get_main_branch_name()}')
-        undo_command = undo_command.add_command(UndoCreateHead(self.repo, branch_name))
+        undo_command.add_command(UndoCreateHead(self.repo, branch_name))
         try:
             self.repo.git.checkout(branch_name)
-            undo_command = undo_command.add_command(UndoCheckout(self.repo, original_branch))
-            mob_data.save_to_file(self.__mob_file_path())
-            undo_command = undo_command.add_command(self.__commit_and_push_everything("WIP mob: start session"))
+            undo_command.add_command(UndoCheckout(self.repo, original_branch))
         except Exception as e:
             undo_command.undo()
             raise e
@@ -84,6 +82,14 @@ class GitCliWithGitPython(GitCliInterface):
 
         return UndoCommand.empty()
 
+    def commit_and_push_everything(self, message: str) -> UndoCommand:
+        self.__fail_if_not_mob_branch()
+
+        self.repo.git.add('-A')
+        self.repo.git.commit('-m', message)
+        self.repo.git.push("origin", self.repo.active_branch.name, "--set-upstream")
+        return UndoCommitAndPushEverything(self.repo)
+
     def __get_current_branch_name_or_sha_if_detached(self) -> BranchName:
         return BranchName(self.repo.active_branch.name or self.repo.active_branch.commit.hexsha)
 
@@ -94,9 +100,9 @@ class GitCliWithGitPython(GitCliInterface):
         """
         return bool(self.repo.is_dirty())
 
-    def __get_mob_data(self) -> MobData | None:
+    def __get_mob_data(self) -> SessionSettings | None:
         try:
-            return MobData.from_file(self.__mob_file_path())
+            return SessionSettings.from_file(self.__mob_file_path())
         except FileNotFoundError:
             return None
 
@@ -121,11 +127,3 @@ class GitCliWithGitPython(GitCliInterface):
                 return BranchName(branch)
 
         return None
-
-    def __commit_and_push_everything(self, message: str) -> UndoCommitAndPushEverything:
-        self.__fail_if_not_mob_branch()
-
-        self.repo.git.add('-A')
-        self.repo.git.commit('-m', message)
-        self.repo.git.push("origin", self.repo.active_branch.name, "--set-upstream")
-        return UndoCommitAndPushEverything(self.repo)

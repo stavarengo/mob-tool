@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from git import Repo
 
+from mob.GitCli.BranchName import BranchName
 from mob.GitCli.GitCliInterface import UndoCommand
-from mob.Services.BranchName import BranchName
 
 
 @dataclass(frozen=True)

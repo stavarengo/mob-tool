@@ -119,12 +119,12 @@ class MobDataSession(TypedDict):
 
 
 @dataclass(frozen=True)
-class MobData(TypedDict):
+class SessionSettings(TypedDict):
     version: int
     session: MobDataSession
 
 
-initial_state: MobData = {
+initial_state: SessionSettings = {
     "version": 1,
     "session": {
         "branch": "mob/feature-1",

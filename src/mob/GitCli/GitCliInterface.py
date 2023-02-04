@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from mob.GitCli.BranchName import BranchName
 from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
-from mob.Services.BranchName import BranchName
-from mob.Services.MobData import MobData
 
 
 @dataclass(frozen=True)
@@ -24,9 +23,12 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
-    def create_new_mob_branch(self, branch_name: BranchName, mob_data: MobData) -> UndoCommand:
+    def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
         pass
 
     @abstractmethod
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
+        pass
+
+    def commit_and_push_everything(self, message: str) -> UndoCommand:
         pass

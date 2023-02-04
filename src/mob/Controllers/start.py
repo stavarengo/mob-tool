@@ -1,10 +1,10 @@
 import click
 
+from mob.GitCli.BranchName import BranchName
 from mob.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
 from mob.LastTeamMembers.TeamMemberName import TeamMemberName
 from mob.LastTeamMembers.TeamMembers import TeamMembers
-from mob.MobSession.StartMobbing import StartMobbing
-from mob.Services.BranchName import BranchName
+from mob.MobApp.StartMobbing import StartMobbing
 from mob.di import di
 
 
