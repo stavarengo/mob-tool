@@ -9,15 +9,18 @@ from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
 class GitCliInterface(ABC):
 
     @abstractmethod
+    def fetch_all(self) -> None:
+        pass
+    
+    @abstractmethod
     def branch_exists(self, branch_name: BranchName) -> bool:
         pass
 
     @abstractmethod
-    def checkout(self, branch_name: BranchName, fail_if_not_mob_branch: bool = True) -> UndoCommand:
+    def checkout(self, branch_name: BranchName) -> UndoCommand:
         """
         :raise: BranchAlreadyExistsAndIsNotMobBranch
         :param branch_name:
-        :param fail_if_not_mob_branch:
         :return:
         """
         pass

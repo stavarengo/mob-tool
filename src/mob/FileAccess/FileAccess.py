@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 
 from injector import inject
@@ -19,3 +20,9 @@ class FileAccess:
     def save(self, content: str, file_path: str) -> None:
         with open(file_path, 'w') as f:
             f.write(content)
+
+    def delete(self, file_path: str) -> None:
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            pass

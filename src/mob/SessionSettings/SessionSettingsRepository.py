@@ -20,3 +20,6 @@ class SessionSettingsRepository:
 
     def save(self, members: SessionSettings) -> None:
         self.file.save(SessionSettings.schema().dumps(members, indent=2), self.secrets.settings_file_path())
+
+    def delete(self) -> None:
+        self.file.delete(self.secrets.settings_file_path())

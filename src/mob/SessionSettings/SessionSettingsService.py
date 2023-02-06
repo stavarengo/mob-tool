@@ -18,9 +18,15 @@ class SessionSettingsService:
     git: GitCliInterface
     secrets: MobSecrets
 
+    def find(self) -> SessionSettings | None:
+        return self.repository.find()
+
     def create(self, members: TeamMembers, rotation: RotationSettings) -> SessionSettings:
         if self.repository.find() is not None:
             raise SessionSettingsAlreadyExists.create()
         data = SessionSettings(members, rotation)
         self.repository.save(data)
         return data
+
+    def delete(self) -> None:
+        self.repository.delete()

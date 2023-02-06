@@ -6,6 +6,7 @@ from injector import inject
 from mob.GitCli.BranchName import BranchName
 from mob.GitCli.GitCliInterface import GitCliInterface
 from mob.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
+from mob.GitCli.UndoCommands.UndoCallable import UndoCallable
 from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
 
 
@@ -18,8 +19,11 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def branch_exists(self, branch_name: BranchName) -> bool:
         return self.__call(self.git.branch_exists, branch_name)
 
-    def checkout(self, branch_name: BranchName, fail_if_not_mob_branch: bool = True) -> UndoCommand:
-        return self.__call(self.git.checkout, branch_name, fail_if_not_mob_branch)
+    def checkout(self, branch_name: BranchName) -> UndoCommand:
+        return self.__call(self.git.checkout, branch_name)
+
+    def fetch_all(self) -> None:
+        return self.__call(self.git.checkout)
 
     def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
         return self.__call(self.git.create_new_branch_from_main_and_checkout, branch_name)
@@ -32,6 +36,12 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
 
     def undo(self):
         self.__undo_command.undo()
+
+    def add_undo_command(self, undo_command: UndoCommand):
+        self.__undo_command.add_command(undo_command)
+
+    def add_undo_callable(self, c: callable):
+        self.__undo_command.add_command(UndoCallable(c))
 
     def __call(self, method: Callable, *args, **kwargs):
         result = method(*args, **kwargs)
