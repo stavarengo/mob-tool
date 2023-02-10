@@ -1,7 +1,8 @@
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import config, dataclass_json
+from marshmallow import fields
 
 from mob.LastTeamMembers.Exceptions import ThereAreDuplicatedTeamMembers, YouCantMobWithLessThanTwoMembers
 from mob.LastTeamMembers.TeamMemberName import TeamMemberName
@@ -10,11 +11,16 @@ from mob.LastTeamMembers.TeamMemberName import TeamMemberName
 @dataclass_json
 @dataclass(frozen=True)
 class TeamMembers:
-    team: list[TeamMemberName]
+    members: list[TeamMemberName] = field(
+        metadata=config(
+            decoder=lambda value: [TeamMemberName(n) for n in value],
+            mm_field=fields.List(fields.Str)
+        )
+    )
 
     def __post_init__(self):
-        unique_team = list(dict.fromkeys(self.team))
-        if len(self.team) != len(unique_team):
+        unique_team = list(dict.fromkeys(self.members))
+        if len(self.members) != len(unique_team):
             raise ThereAreDuplicatedTeamMembers.create()
 
         if self.len < 2:
@@ -22,22 +28,21 @@ class TeamMembers:
 
     @property
     def driver(self) -> TeamMemberName:
-        return self.team[0]
+        return self.members[0]
 
     @property
     def navigator(self) -> TeamMemberName:
-        return self.team[1]
+        return self.members[1]
 
     @property
     def len(self) -> int:
-        return len(self.team)
+        return len(self.members)
 
     def randomize(self) -> 'TeamMembers':
-        print(f'randomize[{self.len}]: {self}')
         if self.len == 2:
             new = TeamMembers([self.navigator, self.driver])
         else:
-            new_team = self.team.copy()
+            new_team = self.members.copy()
             random.shuffle(new_team)
             new = TeamMembers(new_team)
 
@@ -46,4 +51,4 @@ class TeamMembers:
         return new
 
     def __str__(self) -> str:
-        return ', '.join(self.team)
+        return ', '.join(self.members)

@@ -8,7 +8,7 @@ from mob.MobApp.StartMobbing import StartMobbing
 from mob.di import di
 
 
-def __get_team_members() -> TeamMembers:
+def __ask_for_new_members_name() -> TeamMembers:
     click.echo('Name of the team members. One per line. Minimum two.')
 
     members = []
@@ -31,6 +31,7 @@ def __get_team_members() -> TeamMembers:
 @click.option(
     '--reset-members',
     '-r',
+    is_flag=True,
     help='Force to ask for the team members again',
 )
 def start(branch_name: BranchName, members: str = None, reset_members: bool = False) -> None:
@@ -40,18 +41,24 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
     """
     last_team_members_service = di.get(LastTeamMembersService)
     if members:
+        # Members were passed as a comma separated list.
+        # We need to convert it to a list of TeamMemberName
         members = [TeamMemberName(n.strip()) for n in members.split(',') if n and n.strip()]
 
     if members is None:
+        # Members were not passed as a parameter, or it's an empty list. Load the last team members used.
         members = last_team_members_service.get_last_team()
     else:
+        # Members were passed as a parameter. Save them as the last team members used.
         last_team_members_service.save_last_team(members)
 
     if reset_members:
         members = []
 
     if not members:
-        members = __get_team_members()
+        # No members were passed, or no members were saved as the last team members used, or the user wants to reset the
+        # team members. Ask for the team members name.
+        members = __ask_for_new_members_name()
         last_team_members_service.save_last_team(members)
 
     di.get(StartMobbing).start(branch_name, members)
