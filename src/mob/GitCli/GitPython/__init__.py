@@ -2,6 +2,12 @@ import logging
 import os
 
 os.environ["GIT_PYTHON_TRACE"] = "True"
-gitpython_logger = logging.getLogger("git")
-gitpython_logger.setLevel(logging.INFO)
-gitpython_logger.addHandler(logging.StreamHandler())
+
+
+def get_logger() -> logging.Logger:
+    return logging.getLogger("git")
+
+
+from mob.GitCli.GitPython.GitLogHandler import GitLogHandler
+
+GitLogHandler.register(get_logger())

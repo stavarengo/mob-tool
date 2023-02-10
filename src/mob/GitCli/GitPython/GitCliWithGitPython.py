@@ -28,8 +28,6 @@ class GitCliWithGitPython(GitCliInterface):
         return str(branch_name) in self.repo.branches or str(branch_name) in self.repo.remotes.origin.refs
 
     def checkout(self, branch_name: BranchName) -> UndoCommand:
-        self.__fail_if_dirty()
-
         return Checkout(self.repo, branch_name).execute()
 
     def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:

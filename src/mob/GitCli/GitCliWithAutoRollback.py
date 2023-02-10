@@ -5,6 +5,7 @@ from injector import inject
 
 from mob.GitCli.BranchName import BranchName
 from mob.GitCli.GitCliInterface import GitCliInterface
+from mob.GitCli.GitPython import get_logger
 from mob.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
 from mob.GitCli.UndoCommands.UndoCallable import UndoCallable
 from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
@@ -35,7 +36,9 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
         return self.__call(self.git.commit_and_push_everything, message)
 
     def undo(self):
-        self.__undo_command.undo()
+        if self.__undo_command.has_commands:
+            get_logger().warning("Undoing all Git commands")
+            self.__undo_command.undo()
 
     def add_undo_command(self, undo_command: UndoCommand):
         self.__undo_command.add_command(undo_command)

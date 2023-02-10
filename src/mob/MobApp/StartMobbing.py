@@ -14,6 +14,7 @@ from mob.SessionSettings.SessionSettingsService import SessionSettingsService
 @dataclass
 class StartMobbing:
     git: GitCliWithAutoRollback
+
     session_settings_services: SessionSettingsService
 
     def start(self, branch_name: BranchName, team: TeamMembers):
@@ -30,3 +31,5 @@ class StartMobbing:
         except Exception as e:
             self.git.undo()
             raise e
+
+        print('Done. Happy mobbing!')
