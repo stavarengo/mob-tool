@@ -21,15 +21,18 @@ class StartMobbing:
         try:
             if self.git.branch_exists(branch_name):
                 self.git.checkout(branch_name)
-                if self.session_settings_services.find():
+                session_settings = self.session_settings_services.find()
+                if not session_settings:
                     raise BranchAlreadyExistsAndIsNotMobBranch.create(branch_name)
             else:
                 self.git.create_new_branch_from_main_and_checkout(branch_name)
                 self.session_settings_services.create(team, RotationSettings())
                 self.git.add_undo_callable(lambda: self.session_settings_services.delete())
-                self.git.commit_and_push_everything("WIP: mob start")
+                self.git.commit_and_push_everything("WIP: mob start", skip_hooks=True)
         except Exception as e:
-            self.git.undo()
+            if self.git.undo_commands.has_commands:
+                get_logger().warning("Undoing all Git commands")
+                self.git.undo()
             raise e
 
         print('Done. Happy mobbing!')

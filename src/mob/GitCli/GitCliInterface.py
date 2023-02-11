@@ -7,11 +7,14 @@ from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
 
 @dataclass(frozen=True)
 class GitCliInterface(ABC):
+    @abstractmethod
+    def current_branch(self) -> BranchName | None:
+        pass
 
     @abstractmethod
     def fetch_all(self) -> None:
         pass
-    
+
     @abstractmethod
     def branch_exists(self, branch_name: BranchName) -> bool:
         pass
@@ -33,5 +36,5 @@ class GitCliInterface(ABC):
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         pass
 
-    def commit_and_push_everything(self, message: str) -> UndoCommand:
+    def commit_and_push_everything(self, message: str, skip_hooks: bool = False) -> UndoCommand:
         pass

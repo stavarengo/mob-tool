@@ -35,8 +35,15 @@ class TeamMembers:
         return self.members[1]
 
     @property
+    def next_navigator(self) -> TeamMemberName:
+        return self.members[2]
+
+    @property
     def len(self) -> int:
         return len(self.members)
+
+    def rotate(self) -> 'TeamMembers':
+        return TeamMembers([self.navigator, self.next_navigator, *self.members[3:], self.driver])
 
     def randomize(self) -> 'TeamMembers':
         if self.len == 2:

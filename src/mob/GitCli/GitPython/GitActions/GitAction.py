@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from mob.GitCli.GitPython import get_logger
 from mob.GitCli.GitPython.GitActions.Exceptions import ActionAlreadyExecuted, ActionAlreadyUndo
 from mob.GitCli.UndoCommands.UndoCallable import UndoCallable
 from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
@@ -25,6 +26,11 @@ class GitAction(ABC):
         try:
             self._execute()
             return UndoCallable(self.undo)
+        except Exception as e:
+            if not getattr(e, "already_logged", False):
+                get_logger().error(f"Failed: {e}")
+                e.already_logged = True
+            raise e
         finally:
             self.__execution_control.executed = True
 

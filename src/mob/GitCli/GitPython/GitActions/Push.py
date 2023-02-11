@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
-from git import Repo
+from git import GitCommandError, Repo
 
 from mob.GitCli.BranchName import BranchName
+from mob.GitCli.GitPython.GitActions.Exceptions import NonFastForwardPush
 from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 
 
@@ -29,8 +30,14 @@ class Push(GitAction):
             self.__context.unset_upstream = True
             self.__context.delete_remote_branch = True
         else:
-            self.__context.remote_branch_original_hash = branch.tracking_branch().commit.hexsha
-            self.repo.git.push("origin", self.branch_to_push)
+            try:
+                self.__context.remote_branch_original_hash = branch.tracking_branch().commit.hexsha
+                self.repo.git.push("origin", self.branch_to_push)
+            except GitCommandError as e:
+                s = str(e)
+                if "failed to push some refs" in s and "non-fast-forward" in s:
+                    raise NonFastForwardPush.create()
+                raise e
 
     def _undo(self):
         if self.__context.delete_remote_branch:

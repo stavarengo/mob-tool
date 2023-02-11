@@ -21,6 +21,10 @@ class ComposedUndoCommand(UndoCommand):
     def has_commands(self) -> bool:
         return len(self.__commands) > 0
 
+    @property
+    def len(self) -> int:
+        return len(self.__commands)
+
     @classmethod
     def empty(cls) -> 'UndoCommand':
         return ComposedUndoCommand()
