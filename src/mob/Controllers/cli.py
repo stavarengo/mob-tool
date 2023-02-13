@@ -6,6 +6,7 @@ from mob.Controllers.start import start
 
 
 @click.group()
+@click.version_option()
 def cli():
     pass
 
