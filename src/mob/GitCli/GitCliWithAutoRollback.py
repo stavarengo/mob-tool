@@ -34,8 +34,8 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         return self.__call(self.git.add_to_git_info_exclude, new_entry)
 
-    def commit_and_push_everything(self, message: str, skip_hooks: bool = False) -> UndoCommand:
-        return self.__call(self.git.commit_and_push_everything, message, skip_hooks=skip_hooks)
+    def commit_and_push_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
+        return self.__call(self.git.commit_and_push_all, message, skip_hooks=skip_hooks)
 
     def undo(self):
         if self.__undo_command.has_commands:

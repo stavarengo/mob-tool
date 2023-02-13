@@ -36,5 +36,6 @@ class GitCliInterface(ABC):
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         pass
 
-    def commit_and_push_everything(self, message: str, skip_hooks: bool = False) -> UndoCommand:
+    @abstractmethod
+    def commit_and_push_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
         pass

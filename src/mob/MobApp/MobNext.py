@@ -29,7 +29,7 @@ class MobNext:
             except SessionSettingsNotFound:
                 raise BranchAlreadyExistsAndIsNotMobBranch.create(self.git.current_branch())
 
-            self.git.commit_and_push_everything('WIP: mob next', skip_hooks=True)
+            self.git.commit_and_push_all('WIP: mob next', skip_hooks=True)
 
             print(click.style(f'Done! Next driver is: {new_session.team.driver}', fg='bright_green'))
         except Exception as e:

@@ -18,6 +18,7 @@ class _PushUndoContext:
 class Push(GitAction):
     repo: Repo
     branch_to_push: BranchName
+    force: bool = False
 
     def __post_init__(self):
         self.__context: _PushUndoContext = _PushUndoContext()
@@ -32,7 +33,10 @@ class Push(GitAction):
         else:
             try:
                 self.__context.remote_branch_original_hash = branch.tracking_branch().commit.hexsha
-                self.repo.git.push("origin", self.branch_to_push)
+                if self.force:
+                    self.repo.git.push("origin", self.branch_to_push, "--force")
+                else:
+                    self.repo.git.push("origin", self.branch_to_push)
             except GitCommandError as e:
                 s = str(e)
                 if "failed to push some refs" in s and "non-fast-forward" in s:

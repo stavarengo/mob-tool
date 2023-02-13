@@ -46,7 +46,7 @@ class GitCliWithGitPython(GitCliInterface):
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         return AddEntryToInfoExclude(self.repo, new_entry).execute()
 
-    def commit_and_push_everything(self, message: str, skip_hooks: bool = False) -> UndoCommand:
+    def commit_and_push_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
         return ComposedGitActions([
             AddAll(self.repo),
             Commit(self.repo, message, skip_hooks=skip_hooks),
