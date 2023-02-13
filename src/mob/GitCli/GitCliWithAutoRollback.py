@@ -16,30 +16,39 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     git: GitCliInterface
     __undo_command: ComposedUndoCommand = ComposedUndoCommand()
 
-    def current_branch(self) -> BranchName | None:
-        return self.__call(self.git.current_branch)
+    def push(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.push, *args, **kwargs)
 
-    def branch_exists(self, branch_name: BranchName) -> bool:
-        return self.__call(self.git.branch_exists, branch_name)
+    def current_branch(self, *args, **kwargs) -> BranchName | None:
+        return self.__call(self.git.current_branch, *args, **kwargs)
 
-    def checkout(self, branch_name: BranchName) -> UndoCommand:
-        return self.__call(self.git.checkout, branch_name)
+    def branch_exists(self, *args, **kwargs) -> bool:
+        return self.__call(self.git.branch_exists, *args, **kwargs)
 
-    def fetch_all(self) -> None:
-        return self.__call(self.git.checkout)
+    def checkout(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.checkout, *args, **kwargs)
 
-    def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
-        return self.__call(self.git.create_new_branch_from_main_and_checkout, branch_name)
+    def fetch_all(self, *args, **kwargs) -> None:
+        return self.__call(self.git.fetch_all, *args, **kwargs)
 
-    def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
-        return self.__call(self.git.add_to_git_info_exclude, new_entry)
+    def squash_all(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.squash_all, *args, **kwargs)
 
-    def commit_and_push_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
-        return self.__call(self.git.commit_and_push_all, message, skip_hooks=skip_hooks)
+    def create_new_branch_from_main_and_checkout(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.create_new_branch_from_main_and_checkout, *args, **kwargs)
+
+    def add_to_git_info_exclude(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.add_to_git_info_exclude, *args, **kwargs)
+
+    def commit_all_and_push(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.commit_all_and_push, *args, **kwargs)
 
     def undo(self):
         if self.__undo_command.has_commands:
             self.__undo_command.undo()
+
+    def commit_all(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.commit_all, *args, **kwargs)
 
     def add_undo_command(self, undo_command: UndoCommand):
         self.__undo_command.add_command(undo_command)

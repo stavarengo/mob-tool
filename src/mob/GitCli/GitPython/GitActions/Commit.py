@@ -12,10 +12,7 @@ class Commit(GitAction):
     skip_hooks: bool = False
 
     def _execute(self) -> None:
-        if self.skip_hooks:
-            self.repo.git.commit('--no-verify', '-m', self.message)
-        else:
-            self.repo.git.commit('-m', self.message)
+        self.repo.git.commit('--no-verify' if self.skip_hooks else '', '-m', self.message)
 
     def _undo(self):
         self.repo.git.reset('HEAD^')

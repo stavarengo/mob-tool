@@ -39,6 +39,7 @@ class FormatGroupItem(logging.Formatter):
             self._groups.reverse()
             return ""
 
+        record.msg = record.msg.replace('\n', '\\n')
         return click.style(f"{pad}{super().format(record)}", dim=True, fg=self._color_by_level(record))
 
     @property

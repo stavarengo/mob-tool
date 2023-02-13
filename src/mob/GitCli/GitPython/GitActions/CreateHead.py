@@ -11,18 +11,11 @@ from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 class CreateHead(GitAction):
     repo: Repo
     branch_name: BranchName
+    main_branch: BranchName
 
     def _execute(self) -> None:
-        get_logger().info(f'git: creating branch "{self.branch_name}" from "origin/{self.__get_main_branch_name()}"')
-        self.repo.create_head(self.branch_name, f'origin/{self.__get_main_branch_name()}')
+        get_logger().info(f'git: creating branch "{self.branch_name}" from "origin/{self.main_branch}"')
+        self.repo.create_head(self.branch_name, f'origin/{self.main_branch}')
 
     def _undo(self):
         self.repo.git.branch("-D", self.branch_name)
-
-    def __get_main_branch_name(self) -> BranchName | None:
-        all_possible_names = ['master', 'main']
-        for branch in all_possible_names:
-            if branch in self.repo.remotes.origin.refs:
-                return BranchName(branch)
-
-        return None

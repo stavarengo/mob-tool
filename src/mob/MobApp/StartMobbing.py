@@ -32,7 +32,10 @@ class StartMobbing:
                 self.git.create_new_branch_from_main_and_checkout(branch_name)
                 self.session_settings_services.create(team, RotationSettings())
                 self.git.add_undo_callable(lambda: self.session_settings_services.delete())
-                self.git.commit_and_push_all("WIP: mob start", skip_hooks=True)
+                self.git.commit_all_and_push(
+                    "WIP: mob start\n\nHooks skipped: they will be executed when `mob end` is called",
+                    skip_hooks=True
+                )
 
             session_settings = self.session_settings_services.get()
             print(click.style(f'Driver: {session_settings.team.driver}', fg='bright_green'))

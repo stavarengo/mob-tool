@@ -16,6 +16,10 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
+    def squash_all(self, commit_message: str, skip_hooks: bool = False) -> UndoCommand:
+        pass
+
+    @abstractmethod
     def branch_exists(self, branch_name: BranchName) -> bool:
         pass
 
@@ -33,9 +37,17 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
+    def push(self, force: bool = False) -> UndoCommand:
+        pass
+
+    @abstractmethod
+    def commit_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
+        pass
+
+    @abstractmethod
     def add_to_git_info_exclude(self, new_entry: str) -> UndoCommand:
         pass
 
     @abstractmethod
-    def commit_and_push_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
+    def commit_all_and_push(self, message: str, skip_hooks: bool = False) -> UndoCommand:
         pass

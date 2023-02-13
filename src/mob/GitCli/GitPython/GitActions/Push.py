@@ -11,7 +11,6 @@ from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 class _PushUndoContext:
     unset_upstream: bool = False
     delete_remote_branch: bool = False
-    remote_branch_original_hash: str = None
 
 
 @dataclass()
@@ -27,28 +26,30 @@ class Push(GitAction):
     def _execute(self) -> None:
         branch = self.repo.branches[self.branch_to_push]
         if not branch.tracking_branch():
-            self.repo.git.push("origin", self.branch_to_push, "--set-upstream")
+            self._create_upstream()
             self.__context.unset_upstream = True
             self.__context.delete_remote_branch = True
         else:
-            try:
-                self.__context.remote_branch_original_hash = branch.tracking_branch().commit.hexsha
-                if self.force:
-                    self.repo.git.push("origin", self.branch_to_push, "--force")
-                else:
-                    self.repo.git.push("origin", self.branch_to_push)
-            except GitCommandError as e:
-                s = str(e)
-                if "failed to push some refs" in s and "non-fast-forward" in s:
-                    raise NonFastForwardPush.create()
-                raise e
+            self._push_existing_branch()
 
     def _undo(self):
         if self.__context.delete_remote_branch:
             self.repo.git.push("origin", "--delete", self.branch_to_push)
-        elif self.__context.remote_branch_original_hash:
-            self.repo.git.push("origin", self.branch_to_push, self.__context.remote_branch_original_hash)
 
         if self.__context.unset_upstream:
-            branch = self.repo.branches[self.branch_to_push]
-            self.repo.git.branch("--unset-upstream", branch.name)
+            self.repo.git.branch("--unset-upstream", self.branch_to_push)
+
+    def _push_existing_branch(self):
+        try:
+            self.repo.git.push("origin", self.branch_to_push, "--force" if self.force else "")
+        except GitCommandError as e:
+            if self._is_non_fast_forward_push(str(e)):
+                raise NonFastForwardPush.create()
+            raise e
+
+    def _create_upstream(self):
+        self.repo.git.push("origin", self.branch_to_push, "--set-upstream")
+
+    @staticmethod
+    def _is_non_fast_forward_push(error_message: str):
+        return "failed to push some refs" in error_message and "non-fast-forward" in error_message
