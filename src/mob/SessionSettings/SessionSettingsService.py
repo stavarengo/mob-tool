@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass, replace
 
 from injector import inject
@@ -18,7 +19,7 @@ class SessionSettingsService:
     git: GitCliInterface
     secrets: MobSecrets
 
-    def find(self) -> SessionSettings | None:
+    def find(self) -> typing.Optional[SessionSettings]:
         return self.repository.find()
 
     def get(self) -> SessionSettings:

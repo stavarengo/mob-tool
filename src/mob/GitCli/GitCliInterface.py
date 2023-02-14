@@ -1,3 +1,4 @@
+import typing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -8,7 +9,7 @@ from mob.GitCli.UndoCommands.UndoCommand import UndoCommand
 @dataclass(frozen=True)
 class GitCliInterface(ABC):
     @abstractmethod
-    def current_branch(self) -> BranchName | None:
+    def current_branch(self) -> typing.Optional[BranchName]:
         pass
 
     @abstractmethod

@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 
 from git import Repo
@@ -11,7 +12,7 @@ from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 class Checkout(GitAction):
     repo: Repo
     branch_name: BranchName
-    original_head_ref: str | None = None
+    original_head_ref: typing.Optional[str] = None
     fail_if_dirty: bool = True
 
     def _execute(self) -> None:

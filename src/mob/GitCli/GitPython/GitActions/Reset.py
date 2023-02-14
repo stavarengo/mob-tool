@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 
 from git import Repo
@@ -14,7 +15,7 @@ class Reset(GitAction):
     hard: bool
 
     def __post_init__(self):
-        self.__original_head_ref: str | None = None
+        self.__original_head_ref: typing.Optional[str] = None
         super().__post_init__()
 
     def _execute(self) -> None:

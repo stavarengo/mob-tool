@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 
 from injector import inject
@@ -15,7 +16,7 @@ class LastTeamMembersRepository:
     file: FileAccess
     serializer: JsonSerializerInterface
 
-    def load_team(self) -> TeamMembers | None:
+    def load_team(self) -> typing.Optional[TeamMembers]:
         contents = self.file.read(self.secrets.last_team_members_file_path())
         return contents and self.serializer.from_json(TeamMembers, contents) or None
 

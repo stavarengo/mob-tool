@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 
 from git import Repo
@@ -22,7 +23,7 @@ class GitCliWithGitPython(GitCliInterface):
     repo: Repo
     MOB_FILE_NAME: str = '.mob.json'
 
-    def current_branch(self) -> BranchName | None:
+    def current_branch(self) -> typing.Optional[BranchName]:
         if self.repo.head.is_detached:
             return None
         return BranchName(self.repo.active_branch.name)

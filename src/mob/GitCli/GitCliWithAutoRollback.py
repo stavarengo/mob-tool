@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 from typing import Callable
 
@@ -19,7 +20,7 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def push(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.push, *args, **kwargs)
 
-    def current_branch(self, *args, **kwargs) -> BranchName | None:
+    def current_branch(self, *args, **kwargs) -> typing.Optional[BranchName]:
         return self.__call(self.git.current_branch, *args, **kwargs)
 
     def branch_exists(self, *args, **kwargs) -> bool:

@@ -1,4 +1,5 @@
 import os
+import typing
 from dataclasses import dataclass
 
 from injector import inject
@@ -8,7 +9,7 @@ from injector import inject
 @dataclass
 class FileAccess:
 
-    def read(self, file_path: str, fail_if_not_found: bool = False) -> str | None:
+    def read(self, file_path: str, fail_if_not_found: bool = False) -> typing.Optional[str]:
         try:
             with open(file_path, 'r') as f:
                 return f.read()

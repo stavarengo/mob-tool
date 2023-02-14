@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 
 from injector import inject
@@ -15,7 +16,7 @@ class LastTeamMembersService:
     git: GitCliInterface
     secrets: MobSecrets
 
-    def get_last_team(self) -> TeamMembers | None:
+    def get_last_team(self) -> typing.Optional[TeamMembers]:
         return self.repository.load_team()
 
     def save_last_team(self, members: TeamMembers):

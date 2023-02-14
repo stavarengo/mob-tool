@@ -41,7 +41,10 @@ class Push(GitAction):
 
     def _push_existing_branch(self):
         try:
-            self.repo.git.push("origin", self.branch_to_push, "--force" if self.force else "")
+            if self.force:
+                self.repo.git.push("origin", self.branch_to_push, "--force")
+            else:
+                self.repo.git.push("origin", self.branch_to_push)
         except GitCommandError as e:
             if self._is_non_fast_forward_push(str(e)):
                 raise NonFastForwardPush.create()
