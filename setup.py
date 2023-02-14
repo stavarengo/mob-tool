@@ -6,10 +6,6 @@ here = pathlib.Path(__file__).parent.resolve()
 
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-install_requires = []
-with open(f'{here}/requirements.txt', 'r') as f:
-    install_requires = [line.strip() for line in f if line.strip() and not line.startswith('#')]
-
 setup(
     name="mobt",
     version="0.1.0",
@@ -31,5 +27,11 @@ setup(
         "Say Thanks!": "https://saythanks.io/to/faelsta",
         "Source": "https://github.com/stavarengo/stavarengo/",
     },
-    install_requires=install_requires,
+    install_requires=[
+        'click==8.1.3',
+        'injector==0.20.1',
+        'dataclasses-json==0.5.7',
+        'GitPython==3.1.30',
+        'colorama==0.4.6',
+    ],
 )
