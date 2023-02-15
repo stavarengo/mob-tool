@@ -1,10 +1,21 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from git import GitCommandError, Repo
 
 from mob.GitCli.BranchName import BranchName
+from mob.GitCli.GitPython import git_logger
 from mob.GitCli.GitPython.GitActions.Exceptions import NonFastForwardPush
 from mob.GitCli.GitPython.GitActions.GitAction import GitAction
+
+
+@dataclass(frozen=False)
+class _PullRequestData:
+    term: str
+    url: str
+
+    def __str__(self):
+        return f'{self.term}: {self.url}'
 
 
 @dataclass(frozen=False)
@@ -45,6 +56,12 @@ class Push(GitAction):
                 self.repo.git.push("origin", self.branch_to_push, "--force")
             else:
                 self.repo.git.push("origin", self.branch_to_push)
+
+            pull_request = self._pull_request_url(self.branch_to_push)
+            if pull_request:
+                git_logger().info(pull_request)
+            else:
+                git_logger().debug(f"I don't know how what's the PR URL for the server: {self.repo.remote().url}")
         except GitCommandError as e:
             if self._is_non_fast_forward_push(str(e)):
                 raise NonFastForwardPush.create()
@@ -56,3 +73,24 @@ class Push(GitAction):
     @staticmethod
     def _is_non_fast_forward_push(error_message: str):
         return "failed to push some refs" in error_message and "non-fast-forward" in error_message
+
+    def _pull_request_url(self, branch: BranchName) -> Optional[_PullRequestData]:
+        remote_url = self.repo.remote().url
+
+        # Get the name of the current branch and the remote branch it's tracking
+        tracking_branch = self.repo.branches[branch].tracking_branch()
+
+        # Extract the name of the remote branch
+        remote_branch_name = tracking_branch.name.split("/")[1]
+
+        # Construct the URL for the pull request/merge request
+        if "github" in remote_url:
+            return _PullRequestData("Pull Request", f"{remote_url.replace('.git', '')}/pull/new/{remote_branch_name}")
+        elif "gitlab" in remote_url:
+            return _PullRequestData("Merge Request",
+                                    f"{remote_url}/merge_requests/new?merge_request%5Bsource_branch%5D={branch}")
+        elif "bitbucket" in remote_url:
+            return _PullRequestData("Pull Request",
+                                    f"{remote_url}/pull-requests/new?source={branch}&dest={remote_branch_name}")
+
+        return None

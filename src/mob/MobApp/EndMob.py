@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-import click
 from injector import inject
 
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
@@ -37,8 +36,6 @@ class EndMob:
                 skip_hooks=False
             )
             self.git.push(force=True)
-
-            print(click.style(f'Done!'))
         except Exception as e:
             # if self.git.undo_commands.len > 1:
             #     get_logger().warning("Undoing all Git commands")

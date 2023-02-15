@@ -14,3 +14,5 @@ def done(ctx):
         All git hooks will be executed for this final commit.
     """
     di.get(EndMob).end()
+
+    click.secho(f'Done!', fg='green')
