@@ -47,6 +47,9 @@ class CacheVersion:
         content = self.json.to_json(entry)
         self.file.save(content, path)
 
+    def delete(self):
+        self.file.delete(self._get_cached_file_path())
+
     def _is_cache_expired(self, entry: CacheEntry) -> bool:
         return (datetime.now().timestamp() - entry.timestamp) > 60 * 60 * 12
 
