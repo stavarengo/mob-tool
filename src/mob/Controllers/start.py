@@ -5,6 +5,7 @@ from mob.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
 from mob.LastTeamMembers.TeamMemberName import TeamMemberName
 from mob.LastTeamMembers.TeamMembers import TeamMembers
 from mob.MobApp.StartMobbing import StartMobbing
+from mob.Timer.TimerService import TimerService
 from mob.di import di
 
 
@@ -65,4 +66,12 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
         members = __ask_for_new_members_name()
         last_team_members_service.save_last_team(members)
 
-    di.get(StartMobbing).start(branch_name, members)
+    session_settings = di.get(StartMobbing).start(branch_name, members)
+
+    click.secho(f'Driver: {session_settings.team.driver}', fg='bright_green')
+    click.secho(f'Navigator: {session_settings.team.navigator}', fg='bright_green')
+
+    di.get(TimerService).start(session_settings.rotation.driverInMinutes)
+
+    click.secho(f'Your driver round is over. Now you should run `mob next`.', fg='bright_blue')
+

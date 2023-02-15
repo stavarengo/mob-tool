@@ -12,4 +12,6 @@ def next():
 
     It will push all the changes to the remote in a WIP commit.
     """
-    di.get(MobNext).next()
+    next_driver = di.get(MobNext).next()
+
+    print(click.style(f'Done! Next driver is: {next_driver}', fg='bright_green'))

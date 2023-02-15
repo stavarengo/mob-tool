@@ -16,6 +16,8 @@ class EndMob:
     session_settings_services: SessionSettingsService
 
     def end(self):
+        self.git.fail_if_dirty()
+
         current_branch_name = self.git.current_branch()
         if not current_branch_name:
             raise HeadIsDetached.create()
@@ -37,8 +39,6 @@ class EndMob:
             )
             self.git.push(force=True)
         except Exception as e:
-            # if self.git.undo_commands.len > 1:
-            #     get_logger().warning("Undoing all Git commands")
             self.git.undo()
             self.session_settings_services.create(members=session_settings.team, rotation=session_settings.rotation)
             raise e

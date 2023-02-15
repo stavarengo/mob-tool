@@ -17,6 +17,9 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     git: GitCliInterface
     __undo_command: ComposedUndoCommand = ComposedUndoCommand()
 
+    def fail_if_dirty(self, *args, **kwargs) -> None:
+        return self.__call(self.git.fail_if_dirty, *args, **kwargs)
+
     def push(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.push, *args, **kwargs)
 

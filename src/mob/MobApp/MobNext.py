@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-import click
 from injector import inject
 
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mob.GitCli.GitPython import git_logger
+from mob.LastTeamMembers.TeamMemberName import TeamMemberName
 from mob.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, HeadIsDetached
 from mob.SessionSettings.Exceptions import SessionSettingsNotFound
 from mob.SessionSettings.SessionSettingsService import SessionSettingsService
@@ -17,9 +17,11 @@ class MobNext:
 
     session_settings_services: SessionSettingsService
 
-    def next(self):
+    def next(self) -> TeamMemberName:
         if not self.git.current_branch():
             raise HeadIsDetached.create()
+
+        self.git.fail_if_dirty()
 
         try:
             try:
@@ -34,7 +36,7 @@ class MobNext:
                 skip_hooks=True
             )
 
-            print(click.style(f'Done! Next driver is: {new_session.team.driver}', fg='bright_green'))
+            return new_session.team.driver
         except Exception as e:
             if self.git.undo_commands.len > 1:
                 git_logger().warning("Undoing all Git commands")

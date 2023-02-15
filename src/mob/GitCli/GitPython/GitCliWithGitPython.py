@@ -49,7 +49,7 @@ class GitCliWithGitPython(GitCliInterface):
         return Checkout(self.repo, branch_name).execute()
 
     def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
-        self.__fail_if_dirty()
+        self.fail_if_dirty()
 
         return ComposedGitActions([
             CreateHead(self.repo, branch_name, self.__get_main_branch_name()),
@@ -82,6 +82,6 @@ class GitCliWithGitPython(GitCliInterface):
         """
         return bool(self.repo.is_dirty())
 
-    def __fail_if_dirty(self):
+    def fail_if_dirty(self):
         if self.repo.is_dirty():
             raise WorkingDirectoryNotClean.create()

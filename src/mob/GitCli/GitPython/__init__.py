@@ -1,7 +1,10 @@
-import logging
 import os
 
 os.environ["GIT_PYTHON_TRACE"] = "True"
+
+import logging
+import sys
+from mob.GitCli.GitPython.GitLogHandler import FormatGroupItem
 
 
 def git_logger() -> logging.Logger:
@@ -10,4 +13,9 @@ def git_logger() -> logging.Logger:
 
 from mob.GitCli.GitPython.GitLogHandler import GitLogHandler
 
-GitLogHandler.register(git_logger())
+handler = GitLogHandler(sys.stdout)
+handler.setFormatter(FormatGroupItem())
+
+logger = git_logger()
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)

@@ -52,3 +52,7 @@ class GitCliInterface(ABC):
     @abstractmethod
     def commit_all_and_push(self, message: str, skip_hooks: bool = False) -> UndoCommand:
         pass
+
+    @abstractmethod
+    def fail_if_dirty(self):
+        pass

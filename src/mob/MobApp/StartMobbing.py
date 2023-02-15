@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
-import click
 from injector import inject
 
 from mob.GitCli.BranchName import BranchName
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mob.GitCli.GitPython import git_logger
 from mob.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch
+from mob.SessionSettings import SessionSettings
 from mob.SessionSettings.RotationSettings import RotationSettings
 from mob.SessionSettings.SessionSettings import TeamMembers
 from mob.SessionSettings.SessionSettingsService import SessionSettingsService
@@ -22,7 +22,9 @@ class StartMobbing:
 
     timer: TimerService
 
-    def start(self, branch_name: BranchName, team: TeamMembers):
+    def start(self, branch_name: BranchName, team: TeamMembers) -> SessionSettings:
+        self.git.fail_if_dirty()
+
         try:
             if self.git.branch_exists(branch_name):
                 self.git.checkout(branch_name)
@@ -37,10 +39,7 @@ class StartMobbing:
                     skip_hooks=True
                 )
 
-            session_settings = self.session_settings_services.get()
-            print(click.style(f'Driver: {session_settings.team.driver}', fg='bright_green'))
-            print(click.style(f'Navigator: {session_settings.team.navigator}', fg='bright_green'))
-            self.timer.start(session_settings.rotation.driverInMinutes)
+            return self.session_settings_services.get()
         except Exception as e:
             if self.git.undo_commands.has_commands:
                 git_logger().warning("Undoing all Git commands")

@@ -1,11 +1,8 @@
 import logging
-import sys
 from dataclasses import dataclass
 from logging import LogRecord
 
 import click
-
-from mob.GitCli.GitPython import git_logger
 
 
 @dataclass
@@ -81,6 +78,9 @@ class GitLogHandler(logging.StreamHandler):
         return super().filter(record)
 
     def __is_git_command_that_can_be_ignored_becase_it_is_only_reading_data(self, record: LogRecord) -> bool:
+        from mob.GitCli.GitPython import git_logger
+        if git_logger().level <= logging.DEBUG:
+            return False
         if not _is_logging_git_command_execution(record):
             return False
 
@@ -99,12 +99,5 @@ class GitLogHandler(logging.StreamHandler):
 
     @classmethod
     def log_group(cls, name: str) -> GroupContextManager:
+        from mob.GitCli.GitPython import git_logger
         return GroupContextManager(name, git_logger())
-
-    @classmethod
-    def register(cls, logger: logging.Logger):
-        handler = GitLogHandler(sys.stdout)
-        handler.setFormatter(FormatGroupItem())
-
-        logger.setLevel(logging.INFO)
-        logger.addHandler(handler)
