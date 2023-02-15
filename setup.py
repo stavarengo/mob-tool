@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="mobt",
-    version="0.1.8",
+    version="0.1.9",
     description="Mob session management tool",
     long_description=long_description,
     long_description_content_type="text/markdown",

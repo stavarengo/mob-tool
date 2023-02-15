@@ -18,7 +18,7 @@ def _check_for_new_version():
         service = di.get(AutoUpdateService)
         version = service.is_there_new_version()
         if version:
-            mob_logger().info(click.style(f'New version available: {version}', fg='bright_yellow'))
+            mob_logger().warning(click.style(f'New version available: {version}', fg='bright_yellow'))
     except Exception as e:
         version_checker_thread_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
 

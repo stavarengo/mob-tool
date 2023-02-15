@@ -12,10 +12,11 @@ from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 @dataclass(frozen=False)
 class _PullRequestData:
     term: str
-    url: str
+    create_url: str
+    view_url: str
 
     def __str__(self):
-        return f'{self.term}: {self.url}'
+        return f'Create new {self.term}: {self.create_url}'
 
 
 @dataclass(frozen=False)
@@ -59,7 +60,7 @@ class Push(GitAction):
 
             pull_request = self._pull_request_url(self.branch_to_push)
             if pull_request:
-                git_logger().info(pull_request)
+                git_logger().info(str(pull_request))
             else:
                 git_logger().debug(f"I don't know how what's the PR URL for the server: {self.repo.remote().url}")
         except GitCommandError as e:
@@ -85,12 +86,22 @@ class Push(GitAction):
 
         # Construct the URL for the pull request/merge request
         if "github" in remote_url:
-            return _PullRequestData("Pull Request", f"{remote_url.replace('.git', '')}/pull/new/{remote_branch_name}")
+            return _PullRequestData(
+                "Pull Request",
+                f"{remote_url.replace('.git', '')}/pullS?q=is%3Apr+is%3Aopen+head%3A{branch}",
+                ""
+            )
         elif "gitlab" in remote_url:
-            return _PullRequestData("Merge Request",
-                                    f"{remote_url}/merge_requests/new?merge_request%5Bsource_branch%5D={branch}")
+            return _PullRequestData(
+                "Merge Request",
+                f"https://gitlab.molops.io/apps/mollie-platform/-/merge_requests/new?merge_request%5Bsource_branch%5D={branch}",
+                ""
+            )
         elif "bitbucket" in remote_url:
-            return _PullRequestData("Pull Request",
-                                    f"{remote_url}/pull-requests/new?source={branch}&dest={remote_branch_name}")
+            return _PullRequestData(
+                "Pull Request",
+                f"{remote_url}/pull-requests?q=source={branch}+state=OPEN",
+                ""
+            )
 
         return None
