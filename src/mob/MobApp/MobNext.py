@@ -4,7 +4,7 @@ import click
 from injector import inject
 
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
-from mob.GitCli.GitPython import get_logger
+from mob.GitCli.GitPython import git_logger
 from mob.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, HeadIsDetached
 from mob.SessionSettings.Exceptions import SessionSettingsNotFound
 from mob.SessionSettings.SessionSettingsService import SessionSettingsService
@@ -37,6 +37,6 @@ class MobNext:
             print(click.style(f'Done! Next driver is: {new_session.team.driver}', fg='bright_green'))
         except Exception as e:
             if self.git.undo_commands.len > 1:
-                get_logger().warning("Undoing all Git commands")
+                git_logger().warning("Undoing all Git commands")
             self.git.undo()
             raise e

@@ -1,5 +1,6 @@
 import click
 
+from mob.Controllers.boostrap_cli_app import bootstrap_cli_app
 from mob.GitCli.BranchName import BranchName
 from mob.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
 from mob.LastTeamMembers.TeamMemberName import TeamMemberName
@@ -21,7 +22,7 @@ def __ask_for_new_members_name() -> TeamMembers:
     return TeamMembers(members)
 
 
-@click.command(name='start')
+@click.command()
 @click.argument('branch_name')
 @click.option(
     '--members',
@@ -34,11 +35,15 @@ def __ask_for_new_members_name() -> TeamMembers:
     is_flag=True,
     help='Force to ask for the team members again',
 )
-def start(branch_name: BranchName, members: str = None, reset_members: bool = False) -> None:
+@click.option('-v', '--verbose', is_flag=True, help='Enables verbose mode')
+def start(branch_name: BranchName, members: str = None, reset_members: bool = False, verbose: bool = False) -> None:
     """
     It will start a new mob session if BRANCH_NAME doesn't exit, or will continue a previous session if the BRANCH_NAME
     exists.
     """
+
+    bootstrap_cli_app(verbose)
+
     last_team_members_service = di.get(LastTeamMembersService)
     if members:
         # Members were passed as a comma separated list.

@@ -4,10 +4,10 @@ import os
 os.environ["GIT_PYTHON_TRACE"] = "True"
 
 
-def get_logger() -> logging.Logger:
+def git_logger() -> logging.Logger:
     return logging.getLogger("git")
 
 
 from mob.GitCli.GitPython.GitLogHandler import GitLogHandler
 
-GitLogHandler.register(get_logger())
+GitLogHandler.register(git_logger())

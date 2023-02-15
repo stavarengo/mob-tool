@@ -36,7 +36,7 @@ class CacheVersion:
         entry = self.json.from_json(CacheEntry, json_string)
 
         if self._is_cache_expired(entry):
-            self.file.delete(self._get_cached_file_path())
+            self.delete()
             return None
 
         return Version(entry.version)

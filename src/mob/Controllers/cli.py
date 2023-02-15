@@ -12,7 +12,7 @@ def cli():
     pass
 
 
-cli.add_command(start)
+cli.add_command(start, 'start')
 cli.add_command(next, 'next')
 cli.add_command(done, 'done')
 cli.add_command(cache_available_version, 'cache-available-version')

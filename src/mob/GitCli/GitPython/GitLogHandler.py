@@ -5,7 +5,7 @@ from logging import LogRecord
 
 import click
 
-from mob.GitCli.GitPython import get_logger
+from mob.GitCli.GitPython import git_logger
 
 
 @dataclass
@@ -99,7 +99,7 @@ class GitLogHandler(logging.StreamHandler):
 
     @classmethod
     def log_group(cls, name: str) -> GroupContextManager:
-        return GroupContextManager(name, get_logger())
+        return GroupContextManager(name, git_logger())
 
     @classmethod
     def register(cls, logger: logging.Logger):
