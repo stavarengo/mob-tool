@@ -33,5 +33,7 @@ setup(
         'dataclasses-json==0.5.7',
         'GitPython==3.1.30',
         'colorama==0.4.6',
+        'requests==2.28.2',
+        'packaging==23.0',
     ],
 )
