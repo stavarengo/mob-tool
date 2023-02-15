@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="mobt",
-    version="0.1.6",
+    version="0.1.7",
     description="Mob session management tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -37,4 +37,9 @@ setup(
         'packaging==23.0',
         'python-dotenv==0.21.1',
     ],
+    extras_require={
+        "dev": [
+            'twine==4.0.2',
+        ],
+    },
 )

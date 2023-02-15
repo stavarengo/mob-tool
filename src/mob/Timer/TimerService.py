@@ -20,6 +20,7 @@ class TimerService:
         border = "-" * 20
         hide_cursor = "\033[?25l"
         show_cursor = "\033[?25h"
+        print("")
         sys.stdout.write(hide_cursor)
         sys.stdout.write(f"+{border}+\n")
         try:
@@ -37,6 +38,9 @@ class TimerService:
                 sys.stdout.write(colorama.Cursor.UP(lines.count("\n")))
                 sys.stdout.flush()
                 time.sleep(1)
+
+            sys.stdout.write(colorama.Cursor.DOWN(3))
+            print("")
             print("")
             self.make_laptop_speak("Mob Rotate!")
         finally:
