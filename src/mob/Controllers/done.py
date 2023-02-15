@@ -1,12 +1,16 @@
 import click
 
-from mob.Controllers.boostrap_cli_app import bootstrap_cli_app
 from mob.MobApp.EndMob import EndMob
 from mob.di import di
 
 
 @click.command()
-@click.option('-v', '--verbose', is_flag=True, help='Enables verbose mode')
-def done(verbose: bool = False):
-    bootstrap_cli_app(verbose)
+@click.pass_context
+def done(ctx):
+    """
+        End the current mob session.
+
+        It will remove the mob session file, squash all the commits and push all the changes to the remote.
+        All git hooks will be executed for this final commit.
+    """
     di.get(EndMob).end()
