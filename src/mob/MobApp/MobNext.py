@@ -31,6 +31,8 @@ class MobNext:
             except SessionSettingsNotFound:
                 raise BranchAlreadyExistsAndIsNotMobBranch.create(self.git.current_branch())
 
+            self.git.fetch_all()
+
             self.git.commit_all_and_push(
                 'WIP: mob next\n\nHooks skipped: they will be executed when `mob end` is called',
                 skip_hooks=True

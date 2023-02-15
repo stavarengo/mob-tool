@@ -28,6 +28,7 @@ class EndMob:
             raise CurrentBranchIsNotMobBranch.create(current_branch_name)
 
         try:
+            self.git.fetch_all()
             self.session_settings_services.delete()
             self.git.commit_all(
                 f'WIP: mob done: delete session file\n\nHooks skipped: they will be executed when `mob end` is called',

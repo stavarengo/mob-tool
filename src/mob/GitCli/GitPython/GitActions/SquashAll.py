@@ -48,7 +48,7 @@ class SquashAll(GitAction):
         active_branch = self.repo.active_branch
 
         # Find the common ancestor of the feature branch and the master branch
-        master = self.repo.heads[self.main_branch]
+        master = self.repo.remotes.origin.refs[self.main_branch]
         base = self.repo.merge_base(active_branch, master).pop()
 
         self.__commands = ComposedGitActions([
