@@ -35,5 +35,6 @@ setup(
         'colorama==0.4.6',
         'requests==2.28.2',
         'packaging==23.0',
+        'python-dotenv==0.21.1',
     ],
 )
