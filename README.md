@@ -1,4 +1,4 @@
-# Mob-Tool
+# Mob-Tool: `mobt`
 
 Mob-Tool is a command-line tool to manage mob programming sessions for teams working remotely. The tool helps the team
 to manage the session by controlling the timer and switching the driver role among the team members and also by
