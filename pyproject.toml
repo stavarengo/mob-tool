@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mob-tool"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
     { name = "rfst" },
 ]
@@ -34,8 +34,9 @@ dependencies = [
     'python-dotenv==0.21.1',
 ]
 
-[project.entry-points."mobt"]
+[project.scripts]
 mobt = "mobt.Controllers:cli"
+mob-tool = "mobt.Controllers:cli"
 
 [project.urls]
 source = "https://github.com/stavarengo/mobt/"
