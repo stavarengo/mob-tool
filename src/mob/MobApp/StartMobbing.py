@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
+from git import GitError
 from injector import inject
 
 from mob.GitCli.BranchName import BranchName
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mob.GitCli.GitPython import git_logger
 from mob.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch
+from mob.MobException import MobException
 from mob.SessionSettings import SessionSettings
 from mob.SessionSettings.RotationSettings import RotationSettings
 from mob.SessionSettings.SessionSettings import TeamMembers
@@ -42,6 +44,13 @@ class StartMobbing:
             return self.session_settings_services.get()
         except Exception as e:
             if self.git.undo_commands.has_commands:
-                git_logger().warning("Undoing all Git commands")
+                if not getattr(git_logger(), "already_logged_undo_title", False):
+                    git_logger().already_logged_undo_title = True
+                    git_logger().warning("Undoing all Git commands")
+
                 self.git.undo()
+
+            if isinstance(e, GitError):
+                e = MobException(e)
+
             raise e

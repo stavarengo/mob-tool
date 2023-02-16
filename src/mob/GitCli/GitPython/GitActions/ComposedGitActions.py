@@ -4,8 +4,6 @@ from mob.GitCli.GitPython import git_logger
 from mob.GitCli.GitPython.GitActions.GitAction import GitAction
 from mob.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
 
-_undo_title_logged = False
-
 
 @dataclass()
 class ComposedGitActions(GitAction):
@@ -24,10 +22,9 @@ class ComposedGitActions(GitAction):
             raise e
 
     def _undo(self):
-        global _undo_title_logged
-        if not _undo_title_logged:
+        if not getattr(git_logger(), "already_logged_undo_title", False):
+            git_logger().already_logged_undo_title = True
             git_logger().warning("Undoing all Git commands")
-            _undo_title_logged = True
 
         self.__undo.undo()
 

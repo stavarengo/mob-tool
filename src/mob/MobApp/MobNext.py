@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
+from git import GitError
 from injector import inject
 
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mob.GitCli.GitPython import git_logger
 from mob.LastTeamMembers.TeamMemberName import TeamMemberName
 from mob.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, HeadIsDetached
+from mob.MobException import MobException
 from mob.SessionSettings.Exceptions import SessionSettingsNotFound
 from mob.SessionSettings.SessionSettingsService import SessionSettingsService
 
@@ -41,6 +43,12 @@ class MobNext:
             return new_session.team.driver
         except Exception as e:
             if self.git.undo_commands.len > 1:
-                git_logger().warning("Undoing all Git commands")
+                if not getattr(git_logger(), "already_logged_undo_title", False):
+                    git_logger().already_logged_undo_title = True
+                    git_logger().warning("Undoing all Git commands")
+
             self.git.undo()
+            if isinstance(e, GitError):
+                e = MobException(e)
+
             raise e

@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
+from git import GitError
 from injector import inject
 
 from mob.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mob.MobApp.Exceptions import CurrentBranchIsNotMobBranch, HeadIsDetached
+from mob.MobException import MobException
 from mob.SessionSettings.Exceptions import SessionSettingsNotFound
 from mob.SessionSettings.SessionSettingsService import SessionSettingsService
 
@@ -42,4 +44,6 @@ class EndMob:
         except Exception as e:
             self.git.undo()
             self.session_settings_services.create(members=session_settings.team, rotation=session_settings.rotation)
+            if isinstance(e, GitError):
+                e = MobException(e)
             raise e

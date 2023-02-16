@@ -4,6 +4,8 @@ from logging import LogRecord
 
 import click
 
+from mob.Logging import color_by_log_level
+
 
 @dataclass
 class GroupContextManager:
@@ -36,7 +38,7 @@ class FormatGroupItem(logging.Formatter):
             self._groups.reverse()
             return ""
 
-        record.msg = record.msg.replace('\n', '\\n')
+        record.msg = record.msg.replace('\n', ' ')
         return click.style(f"{pad}{super().format(record)}", dim=True, fg=self._color_by_level(record))
 
     @property
@@ -49,20 +51,7 @@ class FormatGroupItem(logging.Formatter):
         if _is_logging_git_command_execution(record):
             return "bright_black"
 
-        level = record.levelno
-
-        if level == logging.DEBUG:
-            return "bright_black"
-        elif level == logging.INFO:
-            return "bright_white"
-        elif level == logging.WARNING:
-            return "bright_yellow"
-        elif level == logging.ERROR:
-            return "bright_red"
-        elif level == logging.CRITICAL:
-            return "bright_red"
-        else:
-            return "bright_white"
+        return color_by_log_level(record)
 
 
 class GitLogHandler(logging.StreamHandler):
