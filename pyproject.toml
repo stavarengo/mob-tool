@@ -3,8 +3,8 @@ requires = ["setuptools >= 67.3.2", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mobt"
-version = "1.0.1"
+name = "mob-tool"
+version = "1.0.2"
 authors = [
     { name = "rfst" },
 ]
@@ -13,7 +13,7 @@ readme = "README.md"
 requires-python = ">=3.7"
 keywords = [
     "mob", "mob-programming", "timer", "mob-programming-timer", "cli-tool",
-    "remote-mob-programming", "remote-mobs"
+    "remote-mob-programming", "remote-mobs", "mob-timer", "mob-tool",
 ]
 license = { file = "LICENSE.txt" }
 classifiers = [
