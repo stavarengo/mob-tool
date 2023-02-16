@@ -20,7 +20,7 @@ setup(
     python_requires=">=3.7",
     entry_points={
         "console_scripts": [
-            "mob=mob.Controllers:cli",
+            "mobt=mobt.Controllers:cli",
         ],
     },
     project_urls={

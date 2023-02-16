@@ -1,12 +1,12 @@
-# mob
+# mobt
 
-This project aims to provide a command line tool for facilitating "mob programming" sessions. The tool, named `mob`, is
+This project aims to provide a command line tool for facilitating "mob programming" sessions. The tool, named `mobt`, is
 designed to automate the process of creating and switching between branches, as well as keeping track of session
 participants.
 
 ## Installation in development mode
 
-To install mob in development mode, you will need to have Python 3.7 or later and pip installed on your system. Then,
+To install `mobt` in development mode, you will need to have Python 3.7 or later and pip installed on your system. Then,
 you can run the following command:
 
 ```bash
@@ -16,7 +16,7 @@ pip install -e .
 This command will install the package in editable mode, which means that you will be able to make changes to the code
 and see the results immediately without having to re-install the package.
 
-Once the installation is complete, you should be able to run the mob command from the command line.
+Once the installation is complete, you should be able to run the mobt command from the command line.
 
 > The `-e` option is used to install the package in "editable" or "develop" mode. This means that any changes made to
 > the package's source code will be immediately reflected in the installed package without the need to re-install it.
@@ -30,7 +30,7 @@ Once the installation is complete, you should be able to run the mob command fro
 To install the package, you need to have python 3.7 or later installed.
 
 ```bash
-pip install mob
+pip install mobt
 ```
 
 ## What changes does the tool make in my repository?
