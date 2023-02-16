@@ -23,8 +23,6 @@ class MobNext:
         if not self.git.current_branch():
             raise HeadIsDetached.create()
 
-        self.git.fail_if_dirty()
-
         try:
             try:
                 old_session = self.session_settings_services.get()
