@@ -62,5 +62,3 @@ See below an example of the output of the `done` command:
 ### Output example with rollback
 
 ![Example of output with rollback](docs/rollback-example.png)
-
-## Tricks & Tips
