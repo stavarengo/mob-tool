@@ -6,10 +6,14 @@ from mob.Controllers.boostrap_cli_app import bootstrap_cli_app
 from mob.Controllers.done import done
 from mob.Controllers.next import next
 from mob.Controllers.start import start
+from mob.DotEnv.DotEnv import DotEnv
+from mob.di import di
+
+_dotEnt = di.get(DotEnv)
 
 
 @click.group()
-@click.version_option()
+@click.version_option(package_name=_dotEnt.PYPI_APP_NAME)
 @click.option('-v', '--verbose', count=True,
               help='Enables verbose mode. The more -v options, the more verbose, up to -vvv')
 @click.option('-s', '--silent', count=True,

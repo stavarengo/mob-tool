@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import click
 
@@ -11,7 +12,7 @@ class _Formater(logging.Formatter):
         return click.style(f"{super().format(record)}", fg=color_by_log_level(record))
 
 
-_handler = logging.StreamHandler()
+_handler = logging.StreamHandler(sys.stdout)
 _handler.setFormatter(_Formater())
 
 _logger = logging.getLogger('mob')
