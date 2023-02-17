@@ -26,6 +26,10 @@ class DotEnv:
         return os.getenv('PYPI_APP_NAME')
 
     @property
+    def APP_CLI_NAME(self) -> str:
+        return os.getenv('APP_CLI_NAME')
+
+    @property
     def APP_ENV(self) -> str:
         return os.getenv('APP_ENV')
 

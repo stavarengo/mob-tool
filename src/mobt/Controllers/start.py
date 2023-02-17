@@ -75,7 +75,7 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
 
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)
 
-    app_name = di.get(DotEnv).PYPI_APP_NAME
+    app_name = di.get(DotEnv).APP_CLI_NAME
     click.secho(f'Your driver round is over. Now you should run `{app_name} next`.', fg='bright_blue')
 
     di.get(GuiService).show_message("Time's up!")
