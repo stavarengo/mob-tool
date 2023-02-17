@@ -15,9 +15,9 @@ class _Formater(logging.Formatter):
 _handler = logging.StreamHandler(sys.stdout)
 _handler.setFormatter(_Formater())
 
-_logger = logging.getLogger('mobt.Version')
+_logger = logging.getLogger('mobt.VersionChecker')
 _logger.addHandler(_handler)
 
 
-def version_checker_thread_logger() -> logging.Logger:
+def version_checker_logger() -> logging.Logger:
     return _logger

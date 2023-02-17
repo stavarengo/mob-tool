@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from injector import inject
 
+from mobt.FileAccess import file_access_logger
+
 
 @inject
 @dataclass
@@ -19,6 +21,11 @@ class FileAccess:
             return None
 
     def save(self, content: str, file_path: str) -> None:
+        dirname = os.path.dirname(file_path)
+        if not os.path.exists(dirname):
+            file_access_logger().debug(
+                f'Creating directory "{dirname}" before open the file "{file_path}" for writing.')
+            os.makedirs(dirname)
         with open(file_path, 'w') as f:
             f.write(content)
 

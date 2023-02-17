@@ -35,7 +35,7 @@ class CacheEntry:
 
 _cache_dir = platformdirs.user_cache_dir(
     appname='mob-tool',
-    version=pkg_resources.get_distribution('mob-tool').version()
+    version=pkg_resources.get_distribution('mob-tool').version,
 )
 
 
@@ -77,5 +77,7 @@ class FileSystemCache(CacheInterface):
         self.file.delete(self._get_cache_file_path(cache_id))
 
     def _get_cache_file_path(self, cache_id: str) -> str:
-        file_name = Path(cache_id).with_suffix('.json')
-        return os.path.join(_cache_dir, file_name)
+        path = Path(cache_id)
+        file_name = path.with_suffix('.json')
+        join = os.path.join(_cache_dir, file_name)
+        return join
