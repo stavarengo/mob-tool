@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mob-tool"
-version = "1.0.3"
+version = "1.0.4"
 authors = [
     { name = "rfst" },
 ]
@@ -39,5 +39,5 @@ mobt = "mobt.Controllers:cli"
 mob-tool = "mobt.Controllers:cli"
 
 [project.urls]
-source = "https://github.com/stavarengo/mobt/"
+source = "https://github.com/stavarengo/mob-tool"
 Say_Thanks = "https://saythanks.io/to/faelsta"
