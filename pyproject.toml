@@ -33,6 +33,7 @@ dependencies = [
     'packaging==23.0',
     'python-dotenv==0.21.1',
     'flet==0.4.0',
+    'platformdirs==3.0.0',
 ]
 
 [project.scripts]

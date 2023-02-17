@@ -1,5 +1,6 @@
 import click
 
+from mobt.Cache import cache_logger
 from mobt.GitCli.GitPython import git_logger
 from mobt.Logging import mob_logger
 from mobt.Version import version_checker_thread_logger
@@ -8,6 +9,7 @@ from mobt.di import di
 
 
 def _set_verbosity(mob_logger_level: int, git_logger_level: int, version_checker_thread_logger_level: int) -> None:
+    cache_logger().setLevel(mob_logger_level)
     mob_logger().setLevel(mob_logger_level)
     git_logger().setLevel(git_logger_level)
     version_checker_thread_logger().setLevel(version_checker_thread_logger_level)
