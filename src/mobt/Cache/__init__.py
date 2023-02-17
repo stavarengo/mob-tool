@@ -1,5 +1,7 @@
 import logging
 
+_loger = logging.getLogger(__name__)
+
 
 def cache_logger() -> logging.Logger:
-    return logging.getLogger('mobt.Cache')
+    return _loger

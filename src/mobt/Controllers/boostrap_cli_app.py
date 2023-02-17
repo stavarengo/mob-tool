@@ -1,37 +1,29 @@
-import click
-
-from mobt.Cache import cache_logger
-from mobt.GitCli.GitPython import git_logger
-from mobt.Logging import mob_logger
-from mobt.VersionChecker import version_checker_logger
-from mobt.VersionChecker.VersionCheckerService import VersionCheckerService
-from mobt.di import di
-
-
-def _set_verbosity(mob_logger_level: int, git_logger_level: int, version_checker_thread_logger_level: int) -> None:
-    cache_logger().setLevel(mob_logger_level)
-    mob_logger().setLevel(mob_logger_level)
-    git_logger().setLevel(git_logger_level)
-    version_checker_logger().setLevel(version_checker_thread_logger_level)
+import logging
+import os
+import sys
 
 
 def _check_for_new_version():
+    from mobt import mob_logger
+    from mobt.VersionChecker.VersionCheckerService import VersionCheckerService
+    from mobt.di import di
     try:
         service = di.get(VersionCheckerService)
         version = service.get_new_version_available()
         if version:
+            import click
             mob_logger().warning(click.style(f'New version available: {version}', fg='bright_yellow'))
     except Exception as e:
-        version_checker_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
+        mob_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
 
 
-def bootstrap_cli_app(mob_logger_verbosity: int, git_logger_verbosity: int,
-                      version_checker_thread_logger_verbosity: int,
-                      check_for_new_version: bool = True):
-    _set_verbosity(
-        mob_logger_level=mob_logger_verbosity,
-        git_logger_level=git_logger_verbosity,
-        version_checker_thread_logger_level=version_checker_thread_logger_verbosity,
-    )
+def bootstrap_cli_app(log_level: int, check_for_new_version: bool = True):
+    from mobt.Logging.logging_utils import set_log_level
+    set_log_level(log_level)
+
+    if log_level > logging.CRITICAL:
+        sys.stdout = open(os.devnull, 'w')
+        sys.stderr = open(os.devnull, 'w')
+
     if check_for_new_version:
         _check_for_new_version()

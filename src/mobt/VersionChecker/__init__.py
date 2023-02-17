@@ -1,22 +1,6 @@
 import logging
-import sys
 
-import click
-
-from mobt.Logging import color_by_log_level
-
-
-class _Formater(logging.Formatter):
-
-    def format(self, record: logging.LogRecord) -> str:
-        return click.style(f"{super().format(record)}", fg=color_by_log_level(record))
-
-
-_handler = logging.StreamHandler(sys.stdout)
-_handler.setFormatter(_Formater())
-
-_logger = logging.getLogger('mobt.VersionChecker')
-_logger.addHandler(_handler)
+_logger = logging.getLogger(__name__)
 
 
 def version_checker_logger() -> logging.Logger:

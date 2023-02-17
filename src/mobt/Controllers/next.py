@@ -1,7 +1,6 @@
 import click
 
-from mobt.MobApp.MobNext import MobNext
-from mobt.di import di
+from mobt import echo
 
 
 @click.command()
@@ -12,6 +11,8 @@ def next():
 
     It will push all the changes to the remote in a WIP commit.
     """
+    from mobt.di import di
+    from mobt.MobApp.MobNext import MobNext
     next_driver = di.get(MobNext).next()
 
-    print(click.style(f'Done! Next driver is: {next_driver}', fg='bright_green'))
+    echo(f'Done! Next driver is: {next_driver}', fg='bright_green')

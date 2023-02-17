@@ -1,13 +1,12 @@
-from git import Repo
-from injector import CallableProvider, Injector, Module as InjectorModule, inject
-
-from mobt.WorkDir import WorkDir
+from injector import Binder, CallableProvider, Module as InjectorModule
 
 
 class Module(InjectorModule):
-    @inject
-    def __provideWorkDir(self, injector: Injector) -> WorkDir:
-        return WorkDir(injector.get(Repo).working_dir)
 
-    def configure(self, binder):
-        binder.bind(WorkDir, to=CallableProvider(self.__provideWorkDir))
+    def configure(self, binder: Binder):
+        from mobt.WorkDir import WorkDir
+        def _provideWorkDir() -> WorkDir:
+            from git import Repo
+            return WorkDir(binder.injector.get(Repo).working_dir)
+
+        binder.bind(WorkDir, to=CallableProvider(_provideWorkDir))

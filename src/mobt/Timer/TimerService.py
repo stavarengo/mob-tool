@@ -1,5 +1,3 @@
-import platform
-import subprocess
 import sys
 import time
 from dataclasses import dataclass
@@ -42,14 +40,5 @@ class TimerService:
             sys.stdout.write(colorama.Cursor.DOWN(3))
             print("")
             print("")
-            self.make_laptop_speak("Mob Rotate!")
         finally:
             sys.stdout.write(show_cursor)
-
-    def make_laptop_speak(self, text: str):
-        if platform.system() == 'Darwin':
-            subprocess.call(['say', text])
-        elif platform.system() == 'Linux':
-            subprocess.call(['espeak', text])
-        else:
-            print("\a")

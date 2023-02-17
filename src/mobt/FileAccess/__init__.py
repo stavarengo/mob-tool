@@ -1,6 +1,6 @@
 import logging
 
-_logger = logging.getLogger('mobt.FileAccess')
+_logger = logging.getLogger(__name__)
 
 
 def file_access_logger() -> logging.Logger:

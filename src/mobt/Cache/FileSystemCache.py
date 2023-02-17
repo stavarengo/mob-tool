@@ -59,8 +59,7 @@ class FileSystemCache(CacheInterface):
             self.delete(cache_id)
             return None
 
-        cache_logger().debug(
-            f'Cache entry found "{cache_id}". Marked for expire at {entry.expires_at.isoformat()}')
+        cache_logger().debug(f'Cache entry found "{cache_id}". Marked for expire at {entry.expires_at.isoformat()}')
 
         return entry
 
