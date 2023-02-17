@@ -75,13 +75,6 @@ class GitCliWithGitPython(GitCliInterface):
             Commit(self.repo, message, skip_hooks=skip_hooks),
         ]).execute()
 
-    def __is_dirty(self) -> bool:
-        """
-        Returns:
-            True if the working directory is not clean, False otherwise
-        """
-        return bool(self.repo.is_dirty())
-
     def fail_if_dirty(self):
-        if self.repo.is_dirty():
+        if self.repo.is_dirty(untracked_files=True):
             raise WorkingDirectoryNotClean.create()

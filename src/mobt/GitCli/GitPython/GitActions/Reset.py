@@ -37,5 +37,5 @@ class Reset(GitAction):
         self._reset(self.__original_head_ref, hard=True)
 
     def __fail_if_dirty(self):
-        if self.repo.is_dirty():
+        if self.repo.is_dirty(untracked_files=True):
             raise WorkingDirectoryNotClean.create()

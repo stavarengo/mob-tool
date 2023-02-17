@@ -34,5 +34,5 @@ class Checkout(GitAction):
         self.repo.git.checkout(self.original_head_ref)
 
     def __fail_if_dirty(self):
-        if self.repo.is_dirty():
+        if self.repo.is_dirty(untracked_files=True):
             raise WorkingDirectoryNotClean.create()

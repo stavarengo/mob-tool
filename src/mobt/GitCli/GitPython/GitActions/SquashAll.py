@@ -18,7 +18,7 @@ class _FailIfNotDirty(GitAction):
     main_branch: BranchName
 
     def _execute(self) -> None:
-        if not self.repo.is_dirty():
+        if not self.repo.is_dirty(untracked_files=True):
             raise ThereIsNoDifferenceBetweenTheCurrentBranchAndTheMainBranch.create(
                 self.active_branch,
                 self.main_branch

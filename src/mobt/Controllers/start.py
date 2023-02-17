@@ -2,6 +2,7 @@ import click
 
 from mobt.DotEnv.DotEnv import DotEnv
 from mobt.GitCli.BranchName import BranchName
+from mobt.Gui.GuiService import GuiService
 from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
 from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
 from mobt.LastTeamMembers.TeamMembers import TeamMembers
@@ -76,3 +77,5 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
 
     app_name = di.get(DotEnv).PYPI_APP_NAME
     click.secho(f'Your driver round is over. Now you should run `{app_name} next`.', fg='bright_blue')
+
+    di.get(GuiService).show_message("Time's up!")

@@ -74,7 +74,7 @@ class GitLogHandler(logging.StreamHandler):
             return False
 
         return record.msg == "git version" or record.msg.startswith("git diff ") \
-            or record.msg.startswith("git cat-file ")
+            or record.msg.startswith("git cat-file ") or record.msg.startswith("git status ")
 
     def handle(self, record: LogRecord) -> bool:
         return super().handle(record)
