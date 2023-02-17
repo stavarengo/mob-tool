@@ -21,6 +21,11 @@ role among team members, and simplifying the necessary Git commands to hand over
 pip install mob-tool
 ```
 
+**Important!**
+> Please note that some operating systems might be equipped with the `python3` and `pip3` commands instead of `python`
+> and `pip` (but they should be equivalent). If you don’t have `pip` or `pip3` available in your system, please check
+> out [pip installation docs](https://pip.pypa.io/en/latest/installation/).
+
 ## Usage
 
 ### Starting a new session
