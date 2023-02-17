@@ -2,14 +2,14 @@ import threading
 
 from injector import inject
 
-from mobt.AutoUpdate import version_checker_thread_logger
-from mobt.AutoUpdate.AutoUpdateService import AutoUpdateService
+from mobt.Version import version_checker_thread_logger
+from mobt.Version.VersionService import VersionService
 
 
 @inject
 class VersionCheckerThread(threading.Thread):
 
-    def __init__(self, service: AutoUpdateService):
+    def __init__(self, service: VersionService):
         super().__init__()
         self._service = service
         self._callback = None

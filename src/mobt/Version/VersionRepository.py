@@ -5,13 +5,13 @@ import pkg_resources
 from injector import inject
 from packaging.version import Version
 
-from mobt.AutoUpdate import version_checker_thread_logger
-from mobt.AutoUpdate.PyPi import PyPi
+from mobt.Version import version_checker_thread_logger
+from mobt.Version.PyPi import PyPi
 
 
 @inject
 @dataclass
-class AutoUpdateRepository:
+class VersionRepository:
     package_index_service: PyPi
 
     def __post_init__(self):

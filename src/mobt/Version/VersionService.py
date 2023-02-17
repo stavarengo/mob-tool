@@ -4,15 +4,18 @@ from typing import Optional
 from injector import inject
 from packaging.version import Version
 
-from mobt.AutoUpdate.AutoUpdateRepository import AutoUpdateRepository
-from mobt.AutoUpdate.CachedVersion import CacheVersion
+from mobt.Version.CachedVersion import CacheVersion
+from mobt.Version.VersionRepository import VersionRepository
 
 
 @inject
 @dataclass
-class AutoUpdateService:
+class VersionService:
     cache: CacheVersion
-    repository: AutoUpdateRepository
+    repository: VersionRepository
+
+    def get_current_installed_version(self) -> Version:
+        return self.repository.get_version_installed_locally()
 
     def store_available_version(self) -> Optional[Version]:
         return self.is_there_new_version()

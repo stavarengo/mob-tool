@@ -1,9 +1,9 @@
 import click
 
-from mobt.AutoUpdate import version_checker_thread_logger
-from mobt.AutoUpdate.AutoUpdateService import AutoUpdateService
 from mobt.GitCli.GitPython import git_logger
 from mobt.Logging import mob_logger
+from mobt.Version import version_checker_thread_logger
+from mobt.Version.VersionService import VersionService
 from mobt.di import di
 
 
@@ -15,7 +15,7 @@ def _set_verbosity(mob_logger_level: int, git_logger_level: int, version_checker
 
 def _check_for_new_version():
     try:
-        service = di.get(AutoUpdateService)
+        service = di.get(VersionService)
         version = service.is_there_new_version()
         if version:
             mob_logger().warning(click.style(f'New version available: {version}', fg='bright_yellow'))

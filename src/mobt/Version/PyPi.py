@@ -5,7 +5,7 @@ import requests
 from injector import inject
 from packaging.version import Version
 
-from mobt.AutoUpdate import version_checker_thread_logger
+from mobt.Version import version_checker_thread_logger
 
 
 @inject

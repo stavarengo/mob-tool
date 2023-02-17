@@ -15,7 +15,7 @@ class _Formater(logging.Formatter):
 _handler = logging.StreamHandler(sys.stdout)
 _handler.setFormatter(_Formater())
 
-_logger = logging.getLogger('mobt.AutoUpdate')
+_logger = logging.getLogger('mobt.Version')
 _logger.addHandler(_handler)
 
 
