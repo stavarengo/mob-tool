@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from typing import Optional
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import config, dataclass_json
 from injector import inject
+from marshmallow import fields
 from packaging.version import Version
 
 from mobt.AutoUpdate import version_checker_thread_logger
@@ -15,7 +16,13 @@ from mobt.JsonSerializer.JsonSerializerInterface import JsonSerializerInterface
 @dataclass
 class CacheEntry:
     version: str
-    timestamp: float
+    expires_at: datetime = field(
+        metadata=config(
+            encoder=datetime.isoformat,
+            decoder=datetime.fromisoformat,
+            mm_field=fields.DateTime(format='iso')
+        )
+    )
 
 
 @inject
@@ -42,12 +49,13 @@ class CacheVersion:
             return None
 
         version_checker_thread_logger().debug(
-            f'Available version number returned from cache: {entry.version}. Cache expires in {datetime.fromtimestamp(entry.timestamp)}')
+            f'Available version number returned from cache: {entry.version}. Cache expires in {entry.expires_at.isoformat()}')
 
         return Version(entry.version)
 
     def save(self, version: Version) -> None:
-        entry = CacheEntry(version=str(version), timestamp=datetime.now().timestamp())
+        expires_at = datetime.now() + timedelta(hours=12)
+        entry = CacheEntry(version=str(version), expires_at=expires_at)
         path = self._get_cached_file_path()
         content = self.json.to_json(entry)
 
@@ -60,7 +68,7 @@ class CacheVersion:
         self.file.delete(self._get_cached_file_path())
 
     def _is_cache_expired(self, entry: CacheEntry) -> bool:
-        return (datetime.now().timestamp() - entry.timestamp) > 60 * 60 * 12
+        return datetime.now() > entry.expires_at
 
     def _get_cached_file_path(self) -> str:
         if not self._cache_file_path:

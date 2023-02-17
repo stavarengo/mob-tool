@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from importlib.metadata import metadata
 from typing import Optional
 
+import pkg_resources
 from injector import inject
 from packaging.version import Version
 
@@ -17,13 +17,12 @@ class AutoUpdateRepository:
     def __post_init__(self):
         self.__current_version: Optional[Version] = None
 
-    def get_available_version(self) -> Optional[Version]:
+    def get_available_version_online(self) -> Optional[Version]:
         return self.package_index_service.get_last_available_version()
 
-    def get_current_version(self) -> Version:
+    def get_version_installed_locally(self) -> Version:
         if not self.__current_version:
-            setup_metadata = metadata('mob-tool')
-            self.__current_version = Version(setup_metadata["version"])
-            version_checker_thread_logger().debug(f'Version found in setup metadata: {self.__current_version}')
+            self.__current_version = Version(pkg_resources.get_distribution('mob-tool').version)
+            version_checker_thread_logger().debug(f'Version installed locally: {self.__current_version}')
 
         return self.__current_version

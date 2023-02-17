@@ -20,11 +20,11 @@ class AutoUpdateService:
     def is_there_new_version(self) -> Optional[Version]:
         available_version = self.cache.get()
         if available_version is None:
-            available_version = self.repository.get_available_version()
+            available_version = self.repository.get_available_version_online()
             if available_version:
                 self.cache.save(available_version)
 
-        if available_version and available_version > self.repository.get_current_version():
+        if available_version and available_version > self.repository.get_version_installed_locally():
             return available_version
         return None
 
