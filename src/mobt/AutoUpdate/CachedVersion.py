@@ -6,7 +6,6 @@ from dataclasses_json import dataclass_json
 from injector import inject
 from packaging.version import Version
 
-from mobt.DotEnv.DotEnv import DotEnv
 from mobt.FileAccess.FileAccess import FileAccess
 from mobt.JsonSerializer.JsonSerializerInterface import JsonSerializerInterface
 
@@ -23,7 +22,6 @@ class CacheEntry:
 class CacheVersion:
     json: JsonSerializerInterface
     file: FileAccess
-    dotEnv: DotEnv
 
     def __post_init__(self):
         self._cache_file_path = None

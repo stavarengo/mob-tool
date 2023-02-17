@@ -1,6 +1,5 @@
 import click
 
-from mobt.DotEnv.DotEnv import DotEnv
 from mobt.GitCli.BranchName import BranchName
 from mobt.Gui.GuiService import GuiService
 from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
@@ -75,7 +74,6 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
 
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)
 
-    app_name = di.get(DotEnv).APP_CLI_NAME
-    click.secho(f'Your driver round is over. Now you should run `{app_name} next`.', fg='bright_blue')
+    click.secho(f'Your driver round is over. Now you should run `mobt next`.', fg='bright_blue')
 
     di.get(GuiService).show_message("Time's up!")

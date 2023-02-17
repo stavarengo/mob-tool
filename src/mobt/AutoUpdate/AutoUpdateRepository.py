@@ -6,14 +6,12 @@ from injector import inject
 from packaging.version import Version
 
 from mobt.AutoUpdate.PyPi import PyPi
-from mobt.DotEnv.DotEnv import DotEnv
 
 
 @inject
 @dataclass
 class AutoUpdateRepository:
     package_index_service: PyPi
-    dotEnv: DotEnv
 
     def __post_init__(self):
         self.__current_version: Optional[Version] = None
@@ -23,7 +21,7 @@ class AutoUpdateRepository:
 
     def get_current_version(self) -> Version:
         if not self.__current_version:
-            setup_metadata = metadata(self.dotEnv.PYPI_APP_NAME)
+            setup_metadata = metadata('mob-tool')
             self.__current_version = Version(setup_metadata["version"])
 
         return self.__current_version

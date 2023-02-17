@@ -6,10 +6,6 @@ from mobt.Controllers.boostrap_cli_app import bootstrap_cli_app
 from mobt.Controllers.done import done
 from mobt.Controllers.next import next
 from mobt.Controllers.start import start
-from mobt.DotEnv.DotEnv import DotEnv
-from mobt.di import di
-
-_dotEnt = di.get(DotEnv)
 
 
 @click.group()
