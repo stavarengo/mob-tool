@@ -1,7 +1,7 @@
 import click
 
+from mobt.AutoUpdate import version_checker_thread_logger
 from mobt.AutoUpdate.AutoUpdateService import AutoUpdateService
-from mobt.AutoUpdate.VersionCheckerThread import version_checker_thread_logger
 from mobt.GitCli.GitPython import git_logger
 from mobt.Logging import mob_logger
 from mobt.di import di

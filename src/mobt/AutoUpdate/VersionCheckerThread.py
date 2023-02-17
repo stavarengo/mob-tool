@@ -1,21 +1,9 @@
-import logging
-import sys
 import threading
 
 from injector import inject
 
+from mobt.AutoUpdate import version_checker_thread_logger
 from mobt.AutoUpdate.AutoUpdateService import AutoUpdateService
-from mobt.DotEnv.DotEnv import DotEnv
-from mobt.di import di
-
-
-def version_checker_thread_logger() -> logging.Logger:
-    return logging.getLogger('mobt.AutoUpdate.VersionCheckerThread')
-
-
-if di.get(DotEnv).is_development():
-    version_checker_thread_logger().addHandler(logging.StreamHandler(sys.stdout))
-    version_checker_thread_logger().setLevel(logging.DEBUG)
 
 
 @inject
