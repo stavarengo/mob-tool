@@ -13,7 +13,7 @@ _dotEnt = di.get(DotEnv)
 
 
 @click.group()
-@click.version_option(package_name=_dotEnt.PYPI_APP_NAME)
+@click.version_option(package_name='mob-tool')
 @click.option('-v', '--verbose', count=True,
               help='Enables verbose mode. The more -v options, the more verbose, up to -vvv')
 @click.option('-s', '--silent', count=True,
