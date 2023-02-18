@@ -11,8 +11,10 @@ def _check_for_new_version():
         service = di.get(VersionCheckerService)
         version = service.get_new_version_available()
         if version:
-            import click
-            mob_logger().warning(click.style(f'New version available: {version}', fg='bright_yellow'))
+            from mobt import echo
+            echo(
+                f'Never version available: {version.last_available_version} (installed version: {version.installed_version})',
+                fg='bright_yellow')
     except Exception as e:
         mob_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
 
