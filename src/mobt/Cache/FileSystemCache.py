@@ -46,10 +46,11 @@ class FileSystemCache(CacheInterface):
     file: FileAccess
 
     def get(self, cache_id: str) -> Optional[CacheEntry]:
-        json_string = self.file.read(self._get_cache_file_path(cache_id))
+        cache_file_path = self._get_cache_file_path(cache_id)
+        json_string = self.file.read(cache_file_path)
 
         if not json_string:
-            cache_logger().debug(f'Cache "{cache_id}" not found.')
+            cache_logger().debug(f'Cache "{cache_id}" not found: "{cache_file_path}".')
             return None
 
         entry = self.json.from_json(CacheEntry, json_string)
@@ -59,21 +60,24 @@ class FileSystemCache(CacheInterface):
             self.delete(cache_id)
             return None
 
-        cache_logger().debug(f'Cache entry found "{cache_id}". Marked for expire at {entry.expires_at.isoformat()}')
+        cache_logger().debug(
+            f'Cache entry found "{cache_id}". Marked for expire at {entry.expires_at.isoformat()}. Cache file: "{cache_file_path}".')
 
         return entry
 
     def save(self, cache_id: str, content: str, expires_at: datetime) -> None:
+        cache_file_path = self._get_cache_file_path(cache_id)
         self.file.save(
             self.json.to_json(CacheEntry(content=content, expires_at=expires_at)),
-            self._get_cache_file_path(cache_id)
+            cache_file_path
         )
-        cache_logger().debug(f'Saved cache "{cache_id}", to expire at {expires_at.isoformat()}')
+        cache_logger().debug(f'Saved cache "{cache_id}", to expire at {expires_at.isoformat()}: "{cache_file_path}"')
 
     def delete(self, cache_id: str):
-        cache_logger().debug(f'Deleted cache "{cache_id}".')
+        cache_file_path = self._get_cache_file_path(cache_id)
+        cache_logger().debug(f'Deleted cache "{cache_id}": "{cache_file_path}".')
 
-        self.file.delete(self._get_cache_file_path(cache_id))
+        self.file.delete(cache_file_path)
 
     def _get_cache_file_path(self, cache_id: str) -> str:
         path = Path(cache_id)
