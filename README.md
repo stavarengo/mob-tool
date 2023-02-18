@@ -37,6 +37,7 @@ mobt start <branch-name>
 ```
 
 Here's an example of the output of the `start` command:
+
 ![Example of mobt start output](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/start-output.png)
 
 ### Handing over to the next driver
@@ -48,6 +49,7 @@ mobt next
 ```
 
 Here's an example of the output of the `next` command:
+
 ![Example of mobt next output](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/next-output.png)
 
 Note that you must call `mob next` even if you didn't make any changes in the code, so the Mob-Tool can manage whose
@@ -67,6 +69,7 @@ This will squash all the commits and push all the changes to the remote. All Git
 commit. The hooks are always ignored during the `start` and `next` commands.
 
 Here's an example of the output of the `done` command:
+
 ![Example of mobt done output](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/done-output.png)
 
 ## FAQ
@@ -75,4 +78,5 @@ Here's an example of the output of the `done` command:
 
 If one of the Git commands fails, all changes made to the repository are rolled back. Here's an example of the output
 with a rollback in action:
+
 ![Example of output with rollback](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/rollback-example.png)
