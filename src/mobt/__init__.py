@@ -1,7 +1,10 @@
+from mobt.PopenObserver import register_popen_wrapper
+
+register_popen_wrapper()
+
 import logging
 
 _logger = logging.getLogger(__name__)
-_logger.propagate = False
 
 
 def mob_logger() -> logging.Logger:

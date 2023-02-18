@@ -5,7 +5,7 @@ from mobt.PopenObserver.PopenListener import PopenListener
 _listeners = []
 
 
-def _notify_listeners(command: str, result: tuple):
+def _notify_listeners(command: list, result: tuple):
     if not _listeners:
         return
 

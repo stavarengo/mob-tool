@@ -20,7 +20,6 @@ def setup_logging():
 
 
 def set_log_level(level: int):
-    # from mobt import mob_logger
     logging.getLogger().setLevel(level)
 
 

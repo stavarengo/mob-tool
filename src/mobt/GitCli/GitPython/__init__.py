@@ -1,10 +1,9 @@
 import logging
-import os
 
-os.environ["GIT_PYTHON_TRACE"] = "True"
+# os.environ["GIT_PYTHON_TRACE"] = "True"
 
-_git_logger = logging.getLogger("git")
+_logger = logging.getLogger(__name__)
 
 
 def git_logger() -> logging.Logger:
-    return _git_logger
+    return _logger
