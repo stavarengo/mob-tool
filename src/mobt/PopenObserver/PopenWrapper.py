@@ -2,14 +2,13 @@ import subprocess
 
 from mobt.PopenObserver.PopenListener import PopenListener
 
-_listeners = []
+_listeners: list[PopenListener] = []
 
 
-def _notify_listeners(command: list, result: tuple):
+def _notify_listeners(command: list[str], stdout: str, stderr: str):
     if not _listeners:
         return
 
-    stdout, stderr = result
     for listener in _listeners:
         listener.popen_executed(command, stdout, stderr)
 
@@ -26,5 +25,8 @@ class PopenWrapper(subprocess.Popen):
 
     def communicate(self, *args, **kwargs):
         result = super().communicate(*args, **kwargs)
-        _notify_listeners(self.args, result)
+        stdout, stderr = result
+        stdout_str = stdout.decode('utf-8')
+        stderr_str = stderr.decode('utf-8')
+        _notify_listeners(self.args, stdout_str, stderr_str)
         return result

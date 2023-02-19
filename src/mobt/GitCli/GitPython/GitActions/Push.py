@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from git import GitCommandError, Repo
 
 from mobt.GitCli.BranchName import BranchName
-from mobt.GitCli.GitPython import git_logger
 from mobt.GitCli.GitPython.GitActions.Exceptions import NonFastForwardPush
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
 
@@ -57,12 +55,6 @@ class Push(GitAction):
                 self.repo.git.push("origin", self.branch_to_push, "--force")
             else:
                 self.repo.git.push("origin", self.branch_to_push)
-
-            pull_request = self._pull_request_url(self.branch_to_push)
-            if pull_request:
-                git_logger().info(str(pull_request))
-            else:
-                git_logger().debug(f"I don't know how what's the PR URL for the server: {self.repo.remote().url}")
         except GitCommandError as e:
             if self._is_non_fast_forward_push(str(e)):
                 raise NonFastForwardPush.create()
@@ -74,34 +66,3 @@ class Push(GitAction):
     @staticmethod
     def _is_non_fast_forward_push(error_message: str):
         return "failed to push some refs" in error_message and "non-fast-forward" in error_message
-
-    def _pull_request_url(self, branch: BranchName) -> Optional[_PullRequestData]:
-        remote_url = self.repo.remote().url
-
-        # Get the name of the current branch and the remote branch it's tracking
-        tracking_branch = self.repo.branches[branch].tracking_branch()
-
-        # Extract the name of the remote branch
-        remote_branch_name = tracking_branch.name.split("/")[1]
-
-        # Construct the URL for the pull request/merge request
-        if "github" in remote_url:
-            return _PullRequestData(
-                "Pull Request",
-                f"{remote_url.replace('.git', '')}/pullS?q=is%3Apr+is%3Aopen+head%3A{branch}",
-                ""
-            )
-        elif "gitlab" in remote_url:
-            return _PullRequestData(
-                "Merge Request",
-                f"https://gitlab.molops.io/apps/mollie-platform/-/merge_requests/new?merge_request%5Bsource_branch%5D={branch}",
-                ""
-            )
-        elif "bitbucket" in remote_url:
-            return _PullRequestData(
-                "Pull Request",
-                f"{remote_url}/pull-requests?q=source={branch}+state=OPEN",
-                ""
-            )
-
-        return None
