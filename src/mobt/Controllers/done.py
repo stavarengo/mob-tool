@@ -23,6 +23,10 @@ def done(ctx, message: str = None, do_not_try_to_rebase: bool = False) -> None:
 
         It will remove the mob session file, squash all the commits and push all the changes to the remote.
         All git hooks will be executed for this final commit.
+
+        Before pushing, it will try to rebase the changes on top of the main branch, but if the rebase fails, it will
+        not affect the end of the mob session. The rebase will just not be done automatically for you. This behavior
+        can be changed with the `--do-not-try-to-rebase` option.
     """
     from mobt.di import di
     from mobt.MobApp.EndMob import EndMob
