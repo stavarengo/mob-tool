@@ -41,6 +41,7 @@ class StartMobbing:
                         session_settings = self.session_settings_services.find()
                         if not session_settings:
                             self._create_session_settings_commit_and_push(team)
+                            session_settings = self.session_settings_services.find()
                     else:
                         raise BranchAlreadyExistsAndIsNotMobBranch.create(branch_name)
 

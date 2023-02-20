@@ -20,7 +20,14 @@ class PullWithRebase(GitAction):
         if not tracking_branch:
             return
 
-        remote_sha = tracking_branch.commit.hexsha
+        try:
+            remote_sha = tracking_branch.commit.hexsha
+        except ValueError as e:
+            e_str = str(e)
+            if 'Reference at' in e_str and 'does not exist' in e_str:
+                return
+            raise e
+
         self._original_sha = self.repo.active_branch.commit.hexsha
 
         if self._original_sha == remote_sha:
@@ -44,5 +51,5 @@ class PullWithRebase(GitAction):
 
         if self._original_sha == self.repo.active_branch.commit.hexsha:
             return
-        
+
         self.repo.git.reset("--hard", self._original_sha)

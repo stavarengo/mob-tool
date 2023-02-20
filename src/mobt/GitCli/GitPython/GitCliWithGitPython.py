@@ -31,7 +31,7 @@ class GitCliWithGitPython(GitCliInterface):
         return BranchName(self.repo.active_branch.name)
 
     def fetch_all(self) -> None:
-        self.repo.git.fetch('--all')
+        self.repo.git.fetch('--all', '--prune')
 
     def __get_main_branch_name(self) -> BranchName:
         all_possible_names = [BranchName('master'), BranchName('main')]
