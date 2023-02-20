@@ -55,6 +55,12 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
         members = TeamMembers([TeamMemberName(n.strip()) for n in members.split(',') if n and n.strip()])
 
     if members is None:
+        from mobt.SessionSettings.SessionSettingsService import SessionSettingsService
+        session_settings_service: SessionSettingsService = di.get(SessionSettingsService)
+        session_settings = session_settings_service.find()
+        members = session_settings.team if session_settings else None
+
+    if members is None:
         # Members were not passed as a parameter, or it's an empty list. Load the last team members used.
         members = last_team_members_service.get_last_team()
     else:

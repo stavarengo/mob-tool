@@ -59,3 +59,9 @@ class TeamMembers:
 
     def __str__(self) -> str:
         return ', '.join(self.members)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TeamMembers):
+            return False
+
+        return self.members == other.members
