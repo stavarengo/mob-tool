@@ -13,6 +13,7 @@ from mobt.GitCli.GitPython.GitActions.Checkout import Checkout
 from mobt.GitCli.GitPython.GitActions.Commit import Commit
 from mobt.GitCli.GitPython.GitActions.ComposedGitActions import ComposedGitActions
 from mobt.GitCli.GitPython.GitActions.CreateHead import CreateHead
+from mobt.GitCli.GitPython.GitActions.PullWithRebase import PullWithRebase
 from mobt.GitCli.GitPython.GitActions.Push import Push
 from mobt.GitCli.GitPython.GitActions.SquashAll import SquashAll
 
@@ -78,3 +79,6 @@ class GitCliWithGitPython(GitCliInterface):
     def fail_if_dirty(self):
         if self.repo.is_dirty(untracked_files=True):
             raise WorkingDirectoryNotClean.create()
+
+    def pull_with_rebase(self):
+        return PullWithRebase(self.repo).execute()

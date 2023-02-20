@@ -56,3 +56,7 @@ class GitCliInterface(ABC):
     @abstractmethod
     def fail_if_dirty(self):
         pass
+
+    @abstractmethod
+    def pull_with_rebase(self):
+        pass

@@ -4,7 +4,7 @@ from git import GitError
 from injector import inject
 
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
-from mobt.GitCli.GitPython import git_logger
+from mobt.GitCli.GitPython import log_undoing_all_git_commands
 from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, HeadIsDetached
 from mobt.MobException import MobException
@@ -41,9 +41,7 @@ class MobNext:
             return new_session.team.driver
         except Exception as e:
             if self.git.undo_commands.len > 1:
-                if not getattr(git_logger(), "already_logged_undo_title", False):
-                    git_logger().already_logged_undo_title = True
-                    git_logger().warning("Undoing all Git commands")
+                log_undoing_all_git_commands()
 
             self.git.undo()
             if isinstance(e, GitError):

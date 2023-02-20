@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from mobt.GitCli.GitPython import git_logger
+from mobt.GitCli.GitPython import log_undoing_all_git_commands
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
 from mobt.GitCli.UndoCommands.ComposedUndoCommand import ComposedUndoCommand
 
@@ -22,10 +22,7 @@ class ComposedGitActions(GitAction):
             raise e
 
     def _undo(self):
-        if not getattr(git_logger(), "already_logged_undo_title", False):
-            git_logger().already_logged_undo_title = True
-            git_logger().warning("Undoing all Git commands")
-
+        log_undoing_all_git_commands()
         self.__undo.undo()
 
     def add_action(self, action: GitAction) -> None:

@@ -21,7 +21,7 @@ def __ask_for_new_members_name() -> TeamMembers:
 
 
 @click.command()
-@click.argument('branch_name')
+@click.argument('branch_name', required=False)
 @click.option(
     '--members',
     '-m',
@@ -34,10 +34,19 @@ def __ask_for_new_members_name() -> TeamMembers:
     is_flag=True,
     help='If passed, it will ignore the team members from the last session (if any) and ask for the team members again.',
 )
-def start(branch_name: BranchName, members: str = None, reset_members: bool = False, verbose: bool = False) -> None:
+@click.option(
+    '--force-if-non-mob-branch',
+    '-f',
+    is_flag=True,
+    help='Force start a mob session even if the branch already exists and is not a mob branch, turning it into a mob '
+         'branch.',
+)
+def start(branch_name: BranchName = None, members: str = None, reset_members: bool = False,
+          force_if_non_mob_branch: bool = False) -> None:
     """
     Start a mob session.
 
+    The BRANCH_NAME is optional. If not passed, it will use the current branch of your repository.
     If the BRANCH_NAME exists, it will continue the mob session from that branch.
     If the BRANCH_NAME doesn't exist, it will create a new branch with that name and start a new mob session.
     """
@@ -76,7 +85,8 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
         members = __ask_for_new_members_name()
         last_team_members_service.save_last_team(members)
 
-    session_settings = di.get(StartMobbing).start(branch_name, members)
+    session_settings = di.get(StartMobbing).start(branch_name=branch_name, team=members,
+                                                  force_if_non_mob_branch=force_if_non_mob_branch)
 
     echo(f'Driver: {session_settings.team.driver}', fg='bright_green')
     echo(f'Navigator: {session_settings.team.navigator}', fg='bright_green')
