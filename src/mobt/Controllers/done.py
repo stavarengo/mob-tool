@@ -4,8 +4,13 @@ from mobt import echo
 
 
 @click.command()
+@click.option(
+    '--message',
+    '-m',
+    help='Optional. Message used for the last commit.',
+)
 @click.pass_context
-def done(ctx):
+def done(ctx, message: str = None) -> None:
     """
         End the current mob session.
 
@@ -14,6 +19,6 @@ def done(ctx):
     """
     from mobt.di import di
     from mobt.MobApp.EndMob import EndMob
-    di.get(EndMob).end()
+    di.get(EndMob).end(message)
 
     echo(f'Done!', fg='green')

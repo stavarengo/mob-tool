@@ -17,7 +17,7 @@ class EndMob:
 
     session_settings_services: SessionSettingsService
 
-    def end(self):
+    def end(self, message: str = None):
         self.git.fail_if_dirty()
 
         current_branch_name = self.git.current_branch()
@@ -32,14 +32,8 @@ class EndMob:
         try:
             self.git.fetch_all()
             self.session_settings_services.delete()
-            self.git.commit_all(
-                'WIP: mob ended: session file deleted',
-                skip_hooks=True
-            )
-            self.git.squash_all(
-                'WIP: mob ended: hooks executed',
-                skip_hooks=False
-            )
+            self.git.commit_all('WIP: mob ended: session file deleted', skip_hooks=True)
+            self.git.squash_all(message or 'WIP: mob ended: hooks executed', skip_hooks=False)
             self.git.push(force=True)
         except Exception as e:
             self.git.undo()
