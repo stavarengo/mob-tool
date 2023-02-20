@@ -77,9 +77,7 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
 
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)
 
-    echo(f'Your driver round is over. Now you should run `mobt next`.', fg='bright_blue')
-
-    def _make_laptop_speak(text: str):
+    def _make_it_speak(text: str):
         import platform
         if platform.system() == 'Darwin':
             subprocess.call(['say', text])
@@ -88,12 +86,15 @@ def start(branch_name: BranchName, members: str = None, reset_members: bool = Fa
         else:
             print("\a")
 
-    import asyncio
-    async def async_functions():
-        loop = asyncio.get_running_loop()
-        await asyncio.gather(
-            loop.run_in_executor(None, lambda: _make_laptop_speak("Mob Rotate!")),
-        )
+    from mobt.Controllers import controllers_logger
 
-    asyncio.run(async_functions())
-    di.get(GuiService).show_message("Time's up!")
+    try:
+        _make_it_speak("Mob Rotate!")
+    except Exception as e:
+        controllers_logger().error(f'Error while trying to make it speak: {e}')
+    try:
+        di.get(GuiService).show_message("Your driver round is over.\nNow you should run `mobt next`.")
+    except Exception as e:
+        controllers_logger().error(f'Error while trying to show the GUI message: {e}')
+
+    echo(f'Your driver round is over. Now you should run `mobt next`.', fg='bright_blue')
