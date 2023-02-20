@@ -1,9 +1,12 @@
+import logging
 from dataclasses import dataclass
 
 from git import GitError
 from injector import inject
 
+from mobt import echo
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
+from mobt.Logging.color_by_log_level import color_by_log_level_int
 from mobt.MobApp.Exceptions import CurrentBranchIsNotMobBranch, HeadIsDetached
 from mobt.MobException import MobException
 from mobt.SessionSettings.Exceptions import SessionSettingsNotFound
@@ -17,7 +20,7 @@ class EndMob:
 
     session_settings_services: SessionSettingsService
 
-    def end(self, message: str = None):
+    def end(self, message: str = None, do_not_try_to_rebase: bool = False):
         self.git.fail_if_dirty()
 
         current_branch_name = self.git.current_branch()
@@ -34,6 +37,16 @@ class EndMob:
             self.session_settings_services.delete()
             self.git.commit_all('WIP: mob ended: session file deleted', skip_hooks=True)
             self.git.squash_all(message or 'WIP: mob ended: hooks executed', skip_hooks=False)
+            if not do_not_try_to_rebase:
+                try:
+                    self.git.with_manual_roll_back().rebase(log_undoing_git_commands_title=False)
+                except GitError as e:
+                    echo(f" > Can't perform auto-rebase. You should do it manually.",
+                         fg=color_by_log_level_int(logging.INFO))
+                    echo(f" > This does not affect the mob ending in any way.", fg=color_by_log_level_int(logging.INFO))
+                    echo(f" > To avoid trying auto-rebase during `mobt done`, use the option `-R` next time.",
+                         fg=color_by_log_level_int(logging.INFO))
+
             self.git.push(force=True)
         except Exception as e:
             self.git.undo()

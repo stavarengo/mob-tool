@@ -38,6 +38,9 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def squash_all(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.squash_all, *args, **kwargs)
 
+    def rebase(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.rebase, *args, **kwargs)
+
     def create_new_branch_from_main_and_checkout(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.create_new_branch_from_main_and_checkout, *args, **kwargs)
 
@@ -72,3 +75,6 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
         if isinstance(result, UndoCommand):
             self.__undo_command.add_command(result)
         return result
+
+    def with_manual_roll_back(self) -> GitCliInterface:
+        return self.git

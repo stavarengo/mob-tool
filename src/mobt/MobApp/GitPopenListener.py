@@ -1,6 +1,8 @@
+import logging
 from dataclasses import dataclass
 from typing import Optional
 
+from mobt.Logging.color_by_log_level import color_by_log_level_int
 from mobt.PopenObserver.PopenListener import PopenListener
 
 
@@ -27,7 +29,7 @@ class GitPopenListener(PopenListener):
         if self._is_git_command(command) and not self._is_git_version_command(command):
             from mobt import echo
 
-            echo(msg, fg='bright_black')
+            echo(msg, fg=color_by_log_level_int(logging.INFO))
             whole_output = stdout + stderr
 
             if self._is_git_push_command(command):

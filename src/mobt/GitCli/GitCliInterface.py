@@ -21,6 +21,10 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
+    def rebase(self, log_undoing_git_commands_title: bool = True) -> UndoCommand:
+        pass
+
+    @abstractmethod
     def branch_exists(self, branch_name: BranchName) -> bool:
         pass
 

@@ -15,6 +15,7 @@ from mobt.GitCli.GitPython.GitActions.ComposedGitActions import ComposedGitActio
 from mobt.GitCli.GitPython.GitActions.CreateHead import CreateHead
 from mobt.GitCli.GitPython.GitActions.PullWithRebase import PullWithRebase
 from mobt.GitCli.GitPython.GitActions.Push import Push
+from mobt.GitCli.GitPython.GitActions.Rebase import Rebase
 from mobt.GitCli.GitPython.GitActions.SquashAll import SquashAll
 
 
@@ -42,6 +43,10 @@ class GitCliWithGitPython(GitCliInterface):
 
     def squash_all(self, commit_message: str, skip_hooks: bool = False) -> UndoCommand:
         return SquashAll(self.repo, self.__get_main_branch_name(), commit_message, skip_hooks).execute()
+
+    def rebase(self, log_undoing_git_commands_title: bool = True) -> UndoCommand:
+        return Rebase(self.repo, BranchName(f"origin/{self.__get_main_branch_name()}"),
+                      log_undoing_git_commands_title=log_undoing_git_commands_title).execute()
 
     def branch_exists(self, branch_name: BranchName) -> bool:
         return str(branch_name) in self.repo.branches or str(branch_name) in self.repo.remotes.origin.refs
