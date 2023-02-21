@@ -8,5 +8,5 @@ from dataclasses_json import dataclass_json
 class RotationSettings:
     driverInMinutes: int = 10
     breakInMinutes: int = 15
-    howManyRotationsBeforeBreak: int = 6
-    howManyRotationsSinceLastBreak: int = 0
+    howManyRotationsBeforeBreak: int = 5
+    howManyRotationsSinceLastBreak: int = 1

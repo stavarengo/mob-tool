@@ -104,12 +104,20 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
 
     from mobt.Controllers import controllers_logger
 
+    rotation = session_settings.rotation
+    time_for_break = rotation.howManyRotationsSinceLastBreak == rotation.howManyRotationsBeforeBreak
+
     try:
-        _make_it_speak("Mob Rotate!")
+        _make_it_speak("Time for a break!" if time_for_break else "Mob Rotate!")
     except Exception as e:
         controllers_logger().error(f'Error while trying to make it speak: {e}')
     try:
-        di.get(GuiService).show_message("Your driver round is over.\nNow you should run `mobt next`.")
+        import flet as ft
+
+        di.get(GuiService).show_message(
+            "Time for a break!" if time_for_break else "Your driver round is over.\nNow you should run `mobt next`.",
+            color=ft.colors.RED_400 if time_for_break else ft.colors.GREEN_400,
+        )
     except Exception as e:
         controllers_logger().error(f'Error while trying to show the GUI message: {e}')
 

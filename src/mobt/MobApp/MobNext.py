@@ -26,17 +26,16 @@ class MobNext:
         try:
             try:
                 old_session = self.session_settings_services.get()
-                new_session = self.session_settings_services.update_members(old_session.team.rotate())
+                self.session_settings_services.update_members(old_session.team.rotate())
                 self.git.add_undo_callable(lambda: self.session_settings_services.update_members(old_session.team))
+                new_session = self.session_settings_services.inc_rotation_count()
+                self.git.add_undo_callable(lambda: self.session_settings_services.inc_rotation_count(-1))
             except SessionSettingsNotFound:
                 raise BranchAlreadyExistsAndIsNotMobBranch.create(self.git.current_branch())
 
             self.git.fetch_all()
 
-            self.git.commit_all_and_push(
-                'WIP: mob next',
-                skip_hooks=True
-            )
+            self.git.commit_all_and_push('WIP: mob next', skip_hooks=True)
 
             return new_session.team.driver
         except Exception as e:

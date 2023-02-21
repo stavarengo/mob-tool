@@ -5,7 +5,7 @@ import flet as ft
 
 @dataclass(frozen=True)
 class GuiService:
-    def show_message(self, message: str) -> None:
+    def show_message(self, message: str, color: str = ft.colors.GREEN_400) -> None:
         def _main(page: ft.Page):
             def _close_window():
                 page.window_close()
@@ -16,7 +16,7 @@ class GuiService:
                     ft.Text(
                         value=message,
                         style=ft.TextThemeStyle.DISPLAY_SMALL,
-                        color=ft.colors.GREEN_400,
+                        color=color,
                         text_align=ft.TextAlign.CENTER,
                     ),
                     ft.ElevatedButton("Close window", on_click=lambda _: _close_window()),
