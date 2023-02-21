@@ -21,6 +21,7 @@ class _PullRequestData:
 class _PushUndoContext:
     unset_upstream: bool = False
     delete_remote_branch: bool = False
+    remote_original_commit: str = None
 
 
 @dataclass()
@@ -49,7 +50,25 @@ class Push(GitAction):
         if self.__context.unset_upstream:
             self.repo.git.branch("--unset-upstream", self.branch_to_push)
 
+        if self.__context.remote_original_commit:
+            branch = self.repo.branches[self.branch_to_push]
+            tracking_branch = branch.tracking_branch()
+            if not self._is_branch_in_sync_with(tracking_branch, self.__context.remote_original_commit):
+                self.repo.git.push(
+                    '--force',
+                    'origin',
+                    f'{self.__context.remote_original_commit}:{self.branch_to_push}'
+                )
+
     def _push_existing_branch(self):
+        branch = self.repo.branches[self.branch_to_push]
+        tracking_branch = branch.tracking_branch()
+
+        if self._is_branch_in_sync_with(tracking_branch, branch.commit.hexsha):
+            return
+
+        self.__context.remote_original_commit = tracking_branch.commit.hexsha
+
         try:
             if self.force:
                 self.repo.git.push("origin", self.branch_to_push, "--force")
@@ -59,6 +78,18 @@ class Push(GitAction):
             if self._is_non_fast_forward_push(str(e)):
                 raise NonFastForwardPush.create()
             raise e
+
+    def _is_branch_in_sync_with(self, branch, at_commit) -> bool:
+        try:
+            if branch and branch.commit.hexsha == at_commit:
+                # Local and remote are in sync
+                return True
+        except ValueError as e:
+            e_str = str(e)
+            if 'Reference at' not in e_str and 'does not exist' not in e_str:
+                raise e
+
+        return False
 
     def _create_upstream(self):
         self.repo.git.push("origin", self.branch_to_push, "--set-upstream")

@@ -43,3 +43,15 @@ class SessionSettingsService:
 
     def delete(self) -> None:
         self.repository.delete()
+
+    def inc_rotation_count(self, inc: int = 1) -> SessionSettings:
+        old_session = self.get()
+        old_rotation = old_session.rotation
+        new_rotation = replace(
+            old_rotation,
+            howManyRotationsLeftBeforeBreak=old_rotation.howManyRotationsLeftBeforeBreak + inc
+        )
+        new_session = replace(old_session, rotation=new_rotation)
+        self.repository.save(new_session)
+
+        return new_session

@@ -32,30 +32,17 @@ class StartMobbing:
         branch_name = branch_name or self.git.current_branch()
 
         try:
-            if self.git.branch_exists(branch_name):
-                self.git.checkout(branch_name)
-                session_settings = self.session_settings_services.find()
-                if not session_settings:
-                    if force_if_non_mob_branch:
-                        self.git.pull_with_rebase()
-                        session_settings = self.session_settings_services.find()
-                        if not session_settings:
-                            self._create_session_settings_commit_and_push(team)
-                            session_settings = self.session_settings_services.find()
-                    else:
-                        raise BranchAlreadyExistsAndIsNotMobBranch.create(branch_name)
+            self._switch_to_the_right_branch(branch_name, force_if_non_mob_branch)
 
-                if session_settings.team != team:
-                    self.session_settings_services.update_members(team)
-                    self.git.add_undo_callable(
-                        lambda: self.session_settings_services.update_members(session_settings.team)
-                    )
-                    self.git.commit_all_and_push("WIP: mob start", skip_hooks=True)
+            session_settings = self.session_settings_services.find()
+            if session_settings:
+                session_settings = self._update_team_if_necessary(session_settings, team)
             else:
-                self.git.create_new_branch_from_main_and_checkout(branch_name)
-                self._create_session_settings_commit_and_push(team)
+                session_settings = self._create_session_settings(team)
 
-            return self.session_settings_services.get()
+            self.git.commit_all_and_push("WIP: mob start", skip_hooks=True)
+
+            return session_settings
         except Exception as e:
             if self.git.undo_commands.has_commands:
                 log_undoing_all_git_commands()
@@ -66,7 +53,31 @@ class StartMobbing:
 
             raise e
 
-    def _create_session_settings_commit_and_push(self, team: TeamMembers):
-        self.session_settings_services.create(team, RotationSettings())
+    def _switch_to_the_right_branch(self, branch_name: BranchName, force_if_non_mob_branch: bool) -> None:
+        if not self.git.branch_exists(branch_name):
+            self.git.create_new_branch_from_main_and_checkout(branch_name)
+        else:
+            self.git.checkout(branch_name)
+            session_settings = self.session_settings_services.find()
+            if session_settings:
+                self.git.pull_with_rebase()
+
+            session_settings = self.session_settings_services.find()
+            if not session_settings:
+                if force_if_non_mob_branch:
+                    self.git.pull_with_rebase()
+                else:
+                    raise BranchAlreadyExistsAndIsNotMobBranch.create(branch_name)
+
+    def _create_session_settings(self, team: TeamMembers) -> SessionSettings:
+        session_settings = self.session_settings_services.create(team, RotationSettings())
         self.git.add_undo_callable(lambda: self.session_settings_services.delete())
-        self.git.commit_all_and_push("WIP: mob start", skip_hooks=True)
+        return session_settings
+
+    def _update_team_if_necessary(self, current_settings: SessionSettings, new_team: TeamMembers) -> SessionSettings:
+        old_team = current_settings.team
+        if old_team != new_team:
+            current_settings = self.session_settings_services.update_members(new_team)
+            self.git.add_undo_callable(lambda: self.session_settings_services.update_members(old_team))
+
+        return current_settings

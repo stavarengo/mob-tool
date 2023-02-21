@@ -9,3 +9,4 @@ class RotationSettings:
     driverInMinutes: int = 10
     breakInMinutes: int = 15
     howManyRotationsBeforeBreak: int = 6
+    howManyRotationsSinceLastBreak: int = 0
