@@ -54,7 +54,6 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
     from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
     from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
     from mobt.MobApp.StartMobbing import StartMobbing
-    from mobt.Gui.GuiService import GuiService
     from mobt.Timer.TimerService import TimerService
     from mobt.di import di
     last_team_members_service = di.get(LastTeamMembersService)
@@ -93,32 +92,54 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
 
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)
 
-    def _make_it_speak(text: str):
-        import platform
-        if platform.system() == 'Darwin':
-            subprocess.call(['say', text])
-        elif platform.system() == 'Linux':
-            subprocess.call(['espeak', text])
-        else:
-            print("\a")
+    _final_announcements(session_settings)
 
+    echo(f'Your driver round is over. Run `mobt next` to pass it to the next driver.', fg='bright_blue')
+
+
+def _final_announcements(session_settings):
     from mobt.Controllers import controllers_logger
+    msg_time_break = "Time for a break!"
+
+    def _speak(msg):
+        def _(text: str):
+            import platform
+            if platform.system() == 'Darwin':
+                subprocess.call(['say', text])
+            elif platform.system() == 'Linux':
+                subprocess.call(['espeak', text])
+            else:
+                print("\a")
+
+        try:
+            _(msg)
+        except Exception as e:
+            controllers_logger().error(f'Error while trying to make it speak: {e}')
+
+    def _show_gui(on_show: callable = None):
+        try:
+            import flet as ft
+            from mobt.Gui.GuiService import GuiService
+            from mobt.di import di
+
+            msg = "Your driver round is over.\nNow you should run `mobt next`."
+            if is_it_time_for_break:
+                msg = msg_time_break
+
+            di.get(GuiService).show_message(
+                msg,
+                color=ft.colors.RED_400 if is_it_time_for_break else ft.colors.GREEN_400,
+                on_show=on_show,
+            )
+        except Exception as e:
+            controllers_logger().error(f'Error while trying to show the GUI message: {e}')
 
     rotation = session_settings.rotation
-    time_for_break = rotation.howManyRotationsSinceLastBreak == rotation.howManyRotationsBeforeBreak
+    is_it_time_for_break = rotation.howManyRotationsSinceLastBreak == rotation.howManyRotationsBeforeBreak
 
-    try:
-        _make_it_speak("Time for a break!" if time_for_break else "Mob Rotate!")
-    except Exception as e:
-        controllers_logger().error(f'Error while trying to make it speak: {e}')
-    try:
-        import flet as ft
+    _show_gui(
+        on_show=lambda: _speak(msg_time_break if is_it_time_for_break else "Mob Rotate!"),
+    )
 
-        di.get(GuiService).show_message(
-            "Time for a break!" if time_for_break else "Your driver round is over.\nNow you should run `mobt next`.",
-            color=ft.colors.RED_400 if time_for_break else ft.colors.GREEN_400,
-        )
-    except Exception as e:
-        controllers_logger().error(f'Error while trying to show the GUI message: {e}')
-
-    echo(f'Your driver round is over. Now you should run `mobt next`.', fg='bright_blue')
+    if is_it_time_for_break:
+        echo(msg_time_break, fg='bright_red')

@@ -5,9 +5,12 @@ import flet as ft
 
 @dataclass(frozen=True)
 class GuiService:
-    def show_message(self, message: str, color: str = ft.colors.GREEN_400) -> None:
+    def show_message(self, message: str, color: str = ft.colors.GREEN_400, on_show: callable = None) -> None:
         def _main(page: ft.Page):
-            def _close_window():
+            def _close_window(e: ft.ControlEvent):
+                if isinstance(e, ft.KeyboardEvent) and e.key != 'Escape':
+                    return
+
                 page.window_close()
 
             def items():
@@ -19,7 +22,7 @@ class GuiService:
                         color=color,
                         text_align=ft.TextAlign.CENTER,
                     ),
-                    ft.ElevatedButton("Close window", on_click=lambda _: _close_window()),
+                    ft.ElevatedButton("Close window", on_click=_close_window),
                 ]
                 return [ft.Container(
                     content=item,
@@ -41,8 +44,10 @@ class GuiService:
 
             page.window_always_on_top = True
 
-            page.on_keyboard_event = lambda e: _close_window() if e.key == 'Escape' else None
+            page.on_keyboard_event = _close_window
 
             page.update()
+            if on_show:
+                on_show()
 
         ft.app(target=_main)
