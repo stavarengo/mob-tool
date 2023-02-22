@@ -53,8 +53,7 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
 
     from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
     from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
-    from mobt.MobApp.StartMobbing import StartMobbing
-    from mobt.Timer.TimerService import TimerService
+    from mobt.MobApp.StartNewMobSession import StartNewMobSession
     from mobt.di import di
     last_team_members_service = di.get(LastTeamMembersService)
     if members:
@@ -84,8 +83,8 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
         members = __ask_for_new_members_name()
         last_team_members_service.save_last_team(members)
 
-    session_settings = di.get(StartMobbing).start(branch_name=branch_name, team=members,
-                                                  force_if_non_mob_branch=force_if_non_mob_branch)
+    session_settings = di.get(StartNewMobSession).start(branch_name=branch_name, team=members,
+                                                        force_if_non_mob_branch=force_if_non_mob_branch)
 
     echo(f'Driver: {session_settings.team.driver}', fg='bright_green')
     echo(f'Navigator: {session_settings.team.navigator}', fg='bright_green')

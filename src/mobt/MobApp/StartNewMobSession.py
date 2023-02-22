@@ -18,7 +18,7 @@ from mobt.Timer.TimerService import TimerService
 
 @inject
 @dataclass
-class StartMobbing:
+class StartNewMobSession:
     git: GitCliWithAutoRollback
 
     session_settings_services: SessionSettingsService
