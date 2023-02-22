@@ -35,8 +35,8 @@ class EndMob:
         try:
             self.git.fetch_all()
             self.session_settings_services.delete()
-            self.git.commit_all('WIP: mob ended: session file deleted', skip_hooks=True)
-            self.git.squash_all(message or 'WIP: mob ended: hooks executed', skip_hooks=False)
+            self.git.commit_all('WIP: Mob done! Session file deleted.', skip_hooks=True)
+            self.git.squash_all(message or 'WIP: Mob done! Squash all and execute hooks.', skip_hooks=False)
             if not do_not_try_to_rebase:
                 try:
                     self.git.with_manual_roll_back().rebase(log_undoing_git_commands_title=False)

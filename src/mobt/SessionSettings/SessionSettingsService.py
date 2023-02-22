@@ -35,11 +35,14 @@ class SessionSettingsService:
         self.repository.save(data)
         return data
 
-    def update_members(self, team: TeamMembers) -> SessionSettings:
-        new_session = replace(self.get(), team=team)
+    def update_members(self, new_team: TeamMembers) -> SessionSettings:
+        current_settings = self.get()
+        old_team = current_settings.team
+        if old_team != new_team:
+            current_settings = replace(current_settings, team=new_team)
+            self.repository.save(current_settings)
 
-        self.repository.save(new_session)
-        return new_session
+        return current_settings
 
     def delete(self) -> None:
         self.repository.delete()

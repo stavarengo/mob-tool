@@ -1,3 +1,7 @@
+import warnings
+
+warnings.filterwarnings('error')
+
 from mobt.PopenObserver import register_popen_wrapper
 
 register_popen_wrapper()

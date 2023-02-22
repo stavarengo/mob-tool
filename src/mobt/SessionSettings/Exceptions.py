@@ -11,3 +11,9 @@ class SessionSettingsNotFound(MobException):
     @staticmethod
     def create() -> 'SessionSettingsNotFound':
         return SessionSettingsNotFound('Session settings not found. This is probably not a mob branch.')
+
+
+class TeamsCanNotHaveLessThaTwoMembers(MobException):
+    @staticmethod
+    def create() -> 'TeamsCanNotHaveLessThaTwoMembers':
+        return TeamsCanNotHaveLessThaTwoMembers('Teams can not have less than two members.')

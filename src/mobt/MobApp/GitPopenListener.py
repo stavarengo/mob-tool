@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
+from mobt import get_log_level
 from mobt.Logging.color_by_log_level import color_by_log_level_int
 from mobt.PopenObserver.PopenListener import PopenListener
 
@@ -26,10 +27,14 @@ class GitPopenListener(PopenListener):
         msg = " ".join(command)
         from mobt.MobApp import mob_app_logger
 
-        if self._is_git_command(command) and not self._is_git_version_command(command):
+        if self._is_git_command(command):
             from mobt import echo
 
-            echo(msg, fg=color_by_log_level_int(logging.INFO))
+            if not self._is_safe_command(command):
+                echo(msg, fg=color_by_log_level_int(logging.INFO))
+            elif get_log_level() <= logging.INFO:
+                mob_app_logger().info(msg)
+
             whole_output = stdout + stderr
 
             if self._is_git_push_command(command):
@@ -43,6 +48,10 @@ class GitPopenListener(PopenListener):
             mob_app_logger().debug(msg)
             whole_output = stdout + stderr
             mob_app_logger().debug(whole_output)
+
+    def _is_safe_command(self, command: list) -> bool:
+        safe_sub_commands = ['diff', 'fetch', 'version']
+        return any(self._is_git_command(command, sub_command) for sub_command in safe_sub_commands)
 
     def _get_pul_requet_url(self, text: str) -> Optional[PullRequestUrl]:
         if not text or 'https://' not in text:
@@ -66,11 +75,8 @@ class GitPopenListener(PopenListener):
 
         return None
 
-    def _is_git_command(self, command: list) -> bool:
-        return command and command[0] == 'git'
-
-    def _is_git_version_command(self, command: list) -> bool:
-        return command and command[0] == 'git' and command[1] == 'version'
+    def _is_git_command(self, command: list, sub_command: str = None) -> bool:
+        return command and command[0] == 'git' and (not sub_command or command[1] == sub_command)
 
     def _is_git_push_command(self, command: list) -> bool:
-        return command and command[0] == 'git' and command[1] == 'push'
+        return self._is_git_command(command, 'push')

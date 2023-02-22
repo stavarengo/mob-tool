@@ -35,7 +35,8 @@ class MobNext:
 
             self.git.fetch_all()
 
-            self.git.commit_all_and_push('WIP: mob next', skip_hooks=True)
+            self.git.commit_all_and_push(
+                f'WIP: Mob next! Driver: {new_session.team.driver}, nav: {new_session.team.navigator}', skip_hooks=True)
 
             return new_session.team.driver
         except Exception as e:
