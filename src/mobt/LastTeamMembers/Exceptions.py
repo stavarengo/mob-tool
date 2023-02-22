@@ -10,7 +10,7 @@ class MemberNameCanNotBeEmpty(MobException):
 class YouCantMobWithLessThanTwoMembers(MobException):
     @staticmethod
     def create() -> 'YouCantMobWithLessThanTwoMembers':
-        return YouCantMobWithLessThanTwoMembers("You can't mob with less than two members.")
+        return YouCantMobWithLessThanTwoMembers("You can't mob with less than two team members.")
 
 
 class ThereAreDuplicatedTeamMembers(MobException):

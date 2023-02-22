@@ -7,12 +7,20 @@ class WorkingDirectoryNotClean(MobException):
     def create(cls):
         return cls("Work directory is not clean.")
 
+    def extra_help(self) -> str:
+        return "Please clean your work directory before trying again."
+
 
 class ThereIsNoDifferenceBetweenTheCurrentBranchAndTheMainBranch(MobException):
+    
     @classmethod
     def create(cls, current_branch_name: str, main_branch_name: str):
         return cls(
-            f"There is no difference between the current branch '{current_branch_name}' and the main branch '{main_branch_name}'.")
+            f"There is no difference between the current branch '{current_branch_name}' and the main branch '{main_branch_name}'."
+        )
+
+    def extra_help(self) -> str:
+        return "That means there is nothing to be merged back to the main branch."
 
 
 class CanNotFindMainBranch(MobException):

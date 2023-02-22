@@ -17,3 +17,6 @@ class TeamsCanNotHaveLessThaTwoMembers(MobException):
     @staticmethod
     def create() -> 'TeamsCanNotHaveLessThaTwoMembers':
         return TeamsCanNotHaveLessThaTwoMembers('Teams can not have less than two members.')
+
+    def extra_help(self) -> str:
+        return "Try again with the parameter `-m` to set your team members."

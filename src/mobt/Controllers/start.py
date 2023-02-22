@@ -5,6 +5,7 @@ import click
 from mobt import echo, prompt
 from mobt.GitCli.BranchName import BranchName
 from mobt.LastTeamMembers.TeamMembers import TeamMembers
+from mobt.MobApp.StartOrContinueMobSession import StartOrContinueMobSession
 
 
 def __ask_for_new_members_name() -> TeamMembers:
@@ -18,6 +19,22 @@ def __ask_for_new_members_name() -> TeamMembers:
         members.append(member)
 
     return TeamMembers(members)
+
+
+def __fetch_member_names(reset_members: bool) -> TeamMembers:
+    from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
+    from mobt.di import di
+    last_team_members_service = di.get(LastTeamMembersService)
+
+    new_members = None
+
+    if not reset_members:
+        new_members = last_team_members_service.get_last_team()
+
+    if not new_members:
+        new_members = __ask_for_new_members_name()
+
+    return new_members
 
 
 @click.command()
@@ -41,8 +58,10 @@ def __ask_for_new_members_name() -> TeamMembers:
     help='Force start a mob session even if the branch already exists and is not a mob branch, turning it into a mob '
          'branch.',
 )
-def start(branch_name: BranchName = None, members: str = None, reset_members: bool = False,
-          force_if_non_mob_branch: bool = False) -> None:
+def start(
+    branch_name: BranchName = None, members: str = None, reset_members: bool = False,
+    force_if_non_mob_branch: bool = False
+) -> None:
     """
     Start a mob session.
 
@@ -51,44 +70,30 @@ def start(branch_name: BranchName = None, members: str = None, reset_members: bo
     If the BRANCH_NAME doesn't exist, it will create a new branch with that name and start a new mob session.
     """
 
-    from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
     from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
-    from mobt.MobApp.StartNewMobSession import StartNewMobSession
     from mobt.di import di
-    last_team_members_service = di.get(LastTeamMembersService)
+
     if members:
         # Members were passed as a comma separated list.
         # We need to convert it to a list of TeamMemberName
         members = TeamMembers([TeamMemberName(n.strip()) for n in members.split(',') if n and n.strip()])
 
-    if members is None:
-        from mobt.SessionSettings.SessionSettingsService import SessionSettingsService
-        session_settings_service: SessionSettingsService = di.get(SessionSettingsService)
-        session_settings = session_settings_service.find()
-        members = session_settings.team if session_settings else None
+    start_or_continue = di.get(StartOrContinueMobSession)
+    session_settings = start_or_continue.execute(
+        branch_name=branch_name,
+        team=members,
+        force_if_non_mob_branch=force_if_non_mob_branch,
+        fetch_members_name=lambda: __fetch_member_names(reset_members)
+    )
 
-    if members is None:
-        # Members were not passed as a parameter, or it's an empty list. Load the last team members used.
-        members = last_team_members_service.get_last_team()
-    else:
-        # Members were passed as a parameter. Save them as the last team members used.
-        last_team_members_service.save_last_team(members)
-
-    if reset_members:
-        members = []
-
-    if not members:
-        # No members were passed, or no members were saved as the last team members used, or the user wants to reset the
-        # team members. Ask for the team members name.
-        members = __ask_for_new_members_name()
-        last_team_members_service.save_last_team(members)
-
-    session_settings = di.get(StartNewMobSession).start(branch_name=branch_name, team=members,
-                                                        force_if_non_mob_branch=force_if_non_mob_branch)
+    from mobt.LastTeamMembers.LastTeamMembersService import LastTeamMembersService
+    last_team_members_service = di.get(LastTeamMembersService)
+    last_team_members_service.save_last_team(session_settings.team)
 
     echo(f'Driver: {session_settings.team.driver}', fg='bright_green')
     echo(f'Navigator: {session_settings.team.navigator}', fg='bright_green')
 
+    from mobt.Timer.TimerService import TimerService
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)
 
     _final_announcements(session_settings)

@@ -8,6 +8,9 @@ class BranchAlreadyExistsAndIsNotMobBranch(MobException):
     def create(cls, branch_name: BranchName):
         return cls(f"The branch {branch_name} already exists, but it's not a mob branch yet.")
 
+    def extra_help(self) -> str:
+        return "Use the option `-f` if you really want to start a mob session on this branch."
+
 
 class BranchIsAlreadyAnMobBranch(MobException):
     @classmethod
