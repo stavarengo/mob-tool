@@ -12,11 +12,11 @@ class WorkingDirectoryNotClean(MobException):
 
 
 class ThereIsNoDifferenceBetweenTheCurrentBranchAndTheMainBranch(MobException):
-    
+
     @classmethod
     def create(cls, current_branch_name: str, main_branch_name: str):
         return cls(
-            f"There is no difference between the current branch '{current_branch_name}' and the main branch '{main_branch_name}'."
+            f"There is no difference between branches '{current_branch_name}' and '{main_branch_name}'."
         )
 
     def extra_help(self) -> str:

@@ -40,8 +40,10 @@ class GitPopenListener(PopenListener):
             if self._is_git_push_command(command):
                 pull_request_url = self._get_pul_requet_url(whole_output)
                 if pull_request_url:
-                    echo(f'To {pull_request_url.action} {pull_request_url.term}, visit:\n   {pull_request_url.url}',
-                         fg='bright_blue')
+                    echo(
+                        f'To {pull_request_url.action} {pull_request_url.term}, visit:\n   {pull_request_url.url}',
+                        fg='bright_blue'
+                    )
 
             mob_app_logger().debug(whole_output)
         else:
@@ -50,7 +52,7 @@ class GitPopenListener(PopenListener):
             mob_app_logger().debug(whole_output)
 
     def _is_safe_command(self, command: list) -> bool:
-        safe_sub_commands = ['diff', 'fetch', 'version']
+        safe_sub_commands = ['diff', 'fetch', 'version', 'merge-base']
         return any(self._is_git_command(command, sub_command) for sub_command in safe_sub_commands)
 
     def _get_pul_requet_url(self, text: str) -> Optional[PullRequestUrl]:
