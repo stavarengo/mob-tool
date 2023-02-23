@@ -35,6 +35,8 @@ class StartOrContinueMobSession:
             self.git.fail_if_dirty()
             self.git.fetch_all()
 
+            branch_name = branch_name or self.git.current_branch()
+
             if self.git.branch_exists(branch_name):
                 self.git.checkout(branch_name)
                 self.git.pull_with_rebase()
