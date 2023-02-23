@@ -51,8 +51,7 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
         return self.__call(self.git.commit_all_and_push, *args, **kwargs)
 
     def undo(self):
-        if self.__undo_command.has_commands:
-            self.__undo_command.undo()
+        self.__undo_command.undo()
 
     def commit_all(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.commit_all, *args, **kwargs)

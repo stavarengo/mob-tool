@@ -6,7 +6,6 @@ from injector import inject
 
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
-from mobt.GitCli.GitPython import log_undoing_all_git_commands
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, BranchIsAlreadyAnMobBranch
 from mobt.MobException import MobException
 from mobt.SessionSettings import SessionSettings
@@ -49,9 +48,7 @@ class StartNewMobSession:
 
             return session_settings
         except Exception as e:
-            if self.git.undo_commands.has_commands:
-                log_undoing_all_git_commands()
-                self.git.undo()
+            self.git.undo()
 
             if isinstance(e, GitError):
                 e = MobException(str(e))

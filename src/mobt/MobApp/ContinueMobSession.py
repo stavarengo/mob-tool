@@ -6,7 +6,6 @@ from injector import inject
 
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
-from mobt.GitCli.GitPython import log_undoing_all_git_commands
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, BranchNotFound
 from mobt.MobException import MobException
 from mobt.SessionSettings import SessionSettings
@@ -22,8 +21,10 @@ class ContinueMobSession:
 
     session_settings_services: SessionSettingsService
 
-    def go(self, branch_name: Optional[BranchName], team: Optional[TeamMembers],
-           fetch_all: bool = True, fail_if_dirty: bool = True) -> SessionSettings:
+    def go(
+        self, branch_name: Optional[BranchName], team: Optional[TeamMembers],
+        fetch_all: bool = True, fail_if_dirty: bool = True
+    ) -> SessionSettings:
         if fail_if_dirty:
             self.git.fail_if_dirty()
 
@@ -40,7 +41,6 @@ class ContinueMobSession:
 
             return session_settings
         except Exception as e:
-            log_undoing_all_git_commands()
             self.git.undo()
 
             if isinstance(e, GitError):
