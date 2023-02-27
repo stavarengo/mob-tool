@@ -81,7 +81,7 @@ class GitCliWithGitPython(GitCliInterface):
             return None
 
     def checkout(self, branch_name: BranchName) -> UndoCommand:
-        return Checkout(self.repo, branch_name).execute()
+        return Checkout(repo=self.repo, branch_name=branch_name, event_manager=self.event_manager).execute()
 
     def create_new_branch_from_main_and_checkout(self, branch_name: BranchName) -> UndoCommand:
         self.fail_if_dirty()
@@ -89,7 +89,7 @@ class GitCliWithGitPython(GitCliInterface):
         return ComposedGitActions(
             [
                 CreateHead(self.repo, branch_name, self.__get_main_branch_name(), event_manager=self.event_manager),
-                Checkout(self.repo, branch_name),
+                Checkout(repo=self.repo, branch_name=branch_name, event_manager=self.event_manager),
             ]
         ).execute()
 

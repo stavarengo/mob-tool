@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from typing import Union
 
 
 def _check_for_new_version():
@@ -41,10 +42,15 @@ def bootstrap_cli_app(log_level: int, check_for_new_version: bool = True):
     from mobt.MobApp.MobAppRelevantOperationHappened import MobAppRelevantOperationHappened
     from mobt.di import di
 
-    def _listener(event: MobAppRelevantOperationHappened):
+    def _listener(event: Union[MobAppRelevantOperationHappened, GitActionWasExecuted]):
         from mobt import echo
         from mobt.Logging.color_by_log_level import color_by_log_level_int
-        echo(event.human_log, fg=color_by_log_level_int(None))
+
+        fg = color_by_log_level_int(None)
+        if isinstance(event, MobAppRelevantOperationHappened):
+            fg = color_by_log_level_int(event.level)
+
+        echo(event.human_log, fg=fg)
 
     di.get(EventManager).add_listener(MobAppRelevantOperationHappened, _listener)
     di.get(EventManager).add_listener(GitActionWasExecuted, _listener)

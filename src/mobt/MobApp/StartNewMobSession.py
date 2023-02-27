@@ -4,9 +4,11 @@ from typing import Optional
 from git import GitError
 from injector import inject
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, BranchIsAlreadyAnMobBranch
+from mobt.MobApp.MobAppRelevantOperationHappened import MobAppRelevantOperationHappened
 from mobt.MobException import MobException
 from mobt.SessionSettings import SessionSettings
 from mobt.SessionSettings.RotationSettings import RotationSettings
@@ -18,7 +20,7 @@ from mobt.SessionSettings.SessionSettingsService import SessionSettingsService
 @dataclass
 class StartNewMobSession:
     git: GitCliWithAutoRollback
-
+    event_manager: EventManager
     session_settings_services: SessionSettingsService
 
     def start(
@@ -42,6 +44,7 @@ class StartNewMobSession:
             if session_settings:
                 raise BranchIsAlreadyAnMobBranch.create(branch_name)
 
+            self.event_manager.dispatch_event(MobAppRelevantOperationHappened(f'Saving mob settings file'))
             session_settings = self._create_session_settings(team)
 
             self.git.commit_all_and_push("WIP: Mob start!", skip_hooks=True)

@@ -3,14 +3,17 @@ from dataclasses import dataclass
 
 from git import Repo
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
+from mobt.GitCli.GitPython.GitActions.GitActionWasExecuted import GitActionWasExecuted
 
 
 @dataclass()
 class Checkout(GitAction):
     repo: Repo
     branch_name: BranchName
+    event_manager: EventManager
     original_head_ref: typing.Optional[str] = None
     fail_if_dirty: bool = True
 
@@ -27,6 +30,10 @@ class Checkout(GitAction):
             return
 
         self._delete_local_branch = not str(self.branch_name) in self.repo.branches
+
+        human_log = f'Checking out branch "{self.branch_name}"'
+
+        self.event_manager.dispatch_event(GitActionWasExecuted(self.__class__, human_log=f'{human_log}'))
 
         self.repo.git.checkout(self.branch_name)
 
