@@ -1,7 +1,8 @@
 import typing
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
+from git import Head, RemoteReference
 from injector import inject
 
 from mobt.GitCli.BranchName import BranchName
@@ -29,10 +30,16 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def branch_exists(self, *args, **kwargs) -> bool:
         return self.__call(self.git.branch_exists, *args, **kwargs)
 
+    def get_local_branch(self, *args, **kwargs) -> Optional[Head]:
+        return self.__call(self.git.get_local_branch, *args, **kwargs)
+
+    def get_remote_branch(self, *args, **kwargs) -> Optional[RemoteReference]:
+        return self.__call(self.git.get_remote_branch, *args, **kwargs)
+
     def checkout(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.checkout, *args, **kwargs)
 
-    def fetch_all(self, *args, **kwargs) -> None:
+    def fetch_all(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.fetch_all, *args, **kwargs)
 
     def squash_all(self, *args, **kwargs) -> UndoCommand:

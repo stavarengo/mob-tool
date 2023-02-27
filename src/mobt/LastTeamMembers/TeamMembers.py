@@ -39,6 +39,10 @@ class TeamMembers:
         return self.members[2] if self.len > 2 else self.members[0]
 
     @property
+    def next_driver(self) -> TeamMemberName:
+        return self.navigator
+
+    @property
     def len(self) -> int:
         return len(self.members)
 

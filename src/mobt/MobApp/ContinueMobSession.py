@@ -4,9 +4,11 @@ from typing import Optional
 from git import GitError
 from injector import inject
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, BranchNotFound
+from mobt.MobApp.MobAppRelevantOperationHappened import MobAppRelevantOperationHappened
 from mobt.MobException import MobException
 from mobt.SessionSettings import SessionSettings
 from mobt.SessionSettings.RotationSettings import RotationSettings
@@ -18,7 +20,7 @@ from mobt.SessionSettings.SessionSettingsService import SessionSettingsService
 @dataclass
 class ContinueMobSession:
     git: GitCliWithAutoRollback
-
+    event_manager: EventManager
     session_settings_services: SessionSettingsService
 
     def go(
@@ -36,6 +38,8 @@ class ContinueMobSession:
         try:
             session_settings = self._branch_checkout(branch_name)
             if team:
+                self.event_manager.dispatch_event(MobAppRelevantOperationHappened(f'Set team members to {team}'))
+
                 session_settings = self._update_team_if_necessary(session_settings, team)
                 self.git.commit_all_and_push(f"WIP: mob set team members to: {team}", skip_hooks=True)
 

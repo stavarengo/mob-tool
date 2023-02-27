@@ -6,6 +6,7 @@ from mobt import echo, prompt
 from mobt.GitCli.BranchName import BranchName
 from mobt.LastTeamMembers.TeamMembers import TeamMembers
 from mobt.MobApp.StartOrContinueMobSession import StartOrContinueMobSession
+from mobt.SessionSettings.SessionSettings import SessionSettings
 
 
 def __ask_for_new_members_name() -> TeamMembers:
@@ -101,11 +102,15 @@ def start(
     echo(f'Your driver round is over. Run `mobt next` to pass it to the next driver.', fg='bright_blue')
 
 
-def _final_announcements(session_settings):
+def _final_announcements(session_settings: SessionSettings):
     from mobt.Controllers import controllers_logger
     msg_time_break = "Time for a break!"
 
-    def _speak(msg):
+    rotation = session_settings.rotation
+    rotations_before_break = rotation.howManyRotationsBeforeBreak - rotation.howManyRotationsSinceLastBreak
+    is_it_time_for_break = rotations_before_break == 0
+
+    def _speak(message: str):
         def _(text: str):
             import platform
             if platform.system() == 'Darwin':
@@ -116,34 +121,34 @@ def _final_announcements(session_settings):
                 print("\a")
 
         try:
-            _(msg)
+            _(message)
         except Exception as e:
             controllers_logger().error(f'Error while trying to make it speak: {e}')
 
-    def _show_gui(on_show: callable = None):
+    def _show_gui(message: str, on_show: callable = None):
         try:
             import flet as ft
             from mobt.Gui.GuiService import GuiService
             from mobt.di import di
 
-            msg = "Your driver round is over.\nNow you should run `mobt next`."
-            if is_it_time_for_break:
-                msg = msg_time_break
-
             di.get(GuiService).show_message(
-                msg,
+                message=message,
                 color=ft.colors.RED_400 if is_it_time_for_break else ft.colors.GREEN_400,
                 on_show=on_show,
             )
         except Exception as e:
             controllers_logger().error(f'Error while trying to show the GUI message: {e}')
 
-    rotation = session_settings.rotation
-    is_it_time_for_break = rotation.howManyRotationsSinceLastBreak == rotation.howManyRotationsBeforeBreak
+    if is_it_time_for_break:
+        msg = msg_time_break + "\nDriver after break: " + session_settings.team.next_driver
+        echo(msg, fg='bright_red')
+    else:
+        msg = f"Next driver: {session_settings.team.next_driver}\n" \
+              f"Break in {rotations_before_break} rounds\n" \
+              f"Now you should run `mobt next`."
+        echo(msg, fg='bright_green')
 
     _show_gui(
+        message=msg,
         on_show=lambda: _speak(msg_time_break if is_it_time_for_break else "Mob Rotate!"),
     )
-
-    if is_it_time_for_break:
-        echo(msg_time_break, fg='bright_red')

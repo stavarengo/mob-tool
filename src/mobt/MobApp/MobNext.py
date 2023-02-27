@@ -4,10 +4,10 @@ from git import GitError
 from injector import inject
 
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
-from mobt.LastTeamMembers.TeamMemberName import TeamMemberName
 from mobt.MobApp.Exceptions import BranchAlreadyExistsAndIsNotMobBranch, HeadIsDetached
 from mobt.MobException import MobException
 from mobt.SessionSettings.Exceptions import SessionSettingsNotFound
+from mobt.SessionSettings.SessionSettings import SessionSettings
 from mobt.SessionSettings.SessionSettingsService import SessionSettingsService
 
 
@@ -18,7 +18,7 @@ class MobNext:
 
     session_settings_services: SessionSettingsService
 
-    def next(self) -> TeamMemberName:
+    def next(self) -> SessionSettings:
         if not self.git.current_branch():
             raise HeadIsDetached.create()
 
@@ -38,7 +38,7 @@ class MobNext:
                 f'WIP: Mob next! Driver: {new_session.team.driver}, nav: {new_session.team.navigator}', skip_hooks=True
             )
 
-            return new_session.team.driver
+            return new_session
         except Exception as e:
             self.git.undo()
             if isinstance(e, GitError):

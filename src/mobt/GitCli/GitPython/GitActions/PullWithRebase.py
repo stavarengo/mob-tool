@@ -3,13 +3,16 @@ from dataclasses import dataclass
 
 from git import Repo
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.GitPython import log_undoing_all_git_commands
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
+from mobt.GitCli.GitPython.GitActions.GitActionWasExecuted import GitActionWasExecuted
 
 
 @dataclass()
 class PullWithRebase(GitAction):
     repo: Repo
+    event_manager: EventManager
 
     def __post_init__(self):
         super().__post_init__()
@@ -34,6 +37,12 @@ class PullWithRebase(GitAction):
             return
 
         try:
+            self.event_manager.dispatch_event(
+                GitActionWasExecuted(
+                    self.__class__,
+                    f'Rebasing local "{self.repo.active_branch}" on top of "{tracking_branch.name}"'
+                )
+            )
             self.repo.git.pull('--rebase')
         except Exception as e:
             log_undoing_all_git_commands()

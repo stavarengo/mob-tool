@@ -15,7 +15,6 @@ class GuiService:
 
             def items():
                 _items = [
-                    ft.Icon(name=ft.icons.TIMER_SHARP, color=ft.colors.GREEN_400, size=65, expand=True),
                     ft.Text(
                         value=message,
                         style=ft.TextThemeStyle.DISPLAY_SMALL,

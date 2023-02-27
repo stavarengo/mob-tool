@@ -1,12 +1,13 @@
 import logging
 from logging import LogRecord
+from typing import Optional
 
 
 def color_by_log_level(record: LogRecord) -> str:
     return color_by_log_level_int(record.levelno)
 
 
-def color_by_log_level_int(level: int) -> str:
+def color_by_log_level_int(level: Optional[int]) -> str:
     """
         Supported color names:
 

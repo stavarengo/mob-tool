@@ -1,9 +1,6 @@
-import logging
 from dataclasses import dataclass
 from typing import Optional
 
-from mobt import get_log_level
-from mobt.Logging.color_by_log_level import color_by_log_level_int
 from mobt.PopenObserver.PopenListener import PopenListener
 
 
@@ -30,15 +27,15 @@ class GitPopenListener(PopenListener):
         if self._is_git_command(command):
             from mobt import echo
 
-            if not self._is_safe_command(command):
-                echo(msg, fg=color_by_log_level_int(logging.INFO))
-            elif get_log_level() <= logging.INFO:
+            if self._is_safe_command(command):
+                mob_app_logger().debug(msg)
+            else:
                 mob_app_logger().info(msg)
 
             whole_output = stdout + stderr
 
             if self._is_git_push_command(command):
-                pull_request_url = self._get_pul_requet_url(whole_output)
+                pull_request_url = self._get_pul_request_url(whole_output)
                 if pull_request_url:
                     echo(
                         f'To {pull_request_url.action} {pull_request_url.term}, visit:\n   {pull_request_url.url}',
@@ -55,7 +52,7 @@ class GitPopenListener(PopenListener):
         safe_sub_commands = ['diff', 'fetch', 'version', 'merge-base']
         return any(self._is_git_command(command, sub_command) for sub_command in safe_sub_commands)
 
-    def _get_pul_requet_url(self, text: str) -> Optional[PullRequestUrl]:
+    def _get_pul_request_url(self, text: str) -> Optional[PullRequestUrl]:
         if not text or 'https://' not in text:
             return None
 

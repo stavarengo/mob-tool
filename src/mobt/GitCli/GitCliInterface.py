@@ -1,6 +1,9 @@
 import typing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Optional
+
+from git import Head, RemoteReference
 
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.UndoCommands.UndoCommand import UndoCommand
@@ -13,7 +16,7 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
-    def fetch_all(self) -> None:
+    def fetch_all(self) -> UndoCommand:
         pass
 
     @abstractmethod
@@ -26,6 +29,14 @@ class GitCliInterface(ABC):
 
     @abstractmethod
     def branch_exists(self, branch_name: BranchName) -> bool:
+        pass
+
+    @abstractmethod
+    def get_local_branch(self, branch_name: BranchName) -> Optional[Head]:
+        pass
+
+    @abstractmethod
+    def get_remote_branch(self, branch_name: BranchName) -> Optional[RemoteReference]:
         pass
 
     @abstractmethod

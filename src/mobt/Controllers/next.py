@@ -13,6 +13,6 @@ def next():
     """
     from mobt.di import di
     from mobt.MobApp.MobNext import MobNext
-    next_driver = di.get(MobNext).next()
+    session_settings = di.get(MobNext).next()
 
-    echo(f'Done! Next driver is: {next_driver}', fg='bright_green')
+    echo(f'Next driver: {session_settings.team.driver}', fg='bright_green')

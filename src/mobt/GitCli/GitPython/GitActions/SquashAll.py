@@ -2,12 +2,14 @@ from dataclasses import dataclass
 
 from git import Repo
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.Exceptions import ThereIsNoDifferenceBetweenTheCurrentBranchAndTheMainBranch
 from mobt.GitCli.GitPython.GitActions.AddAll import AddAll
 from mobt.GitCli.GitPython.GitActions.Commit import Commit
 from mobt.GitCli.GitPython.GitActions.ComposedGitActions import ComposedGitActions
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
+from mobt.GitCli.GitPython.GitActions.GitActionWasExecuted import GitActionWasExecuted
 from mobt.GitCli.GitPython.GitActions.Reset import Reset
 
 
@@ -16,6 +18,7 @@ class _FailIfNotDirty(GitAction):
     repo: Repo
     active_branch: BranchName
     main_branch: BranchName
+    event_manager: EventManager
 
     def _execute(self) -> None:
         if not self.repo.is_dirty(untracked_files=True):
@@ -38,6 +41,7 @@ class SquashAll(GitAction):
     repo: Repo
     main_branch: BranchName
     commit_message: str
+    event_manager: EventManager
     skip_hooks: bool = False
 
     def __post_init__(self):
@@ -51,12 +55,21 @@ class SquashAll(GitAction):
         master = self.repo.remotes.origin.refs[self.main_branch]
         base = self.repo.merge_base(active_branch, master).pop()
 
-        self.__commands = ComposedGitActions([
-            Reset(self.repo, BranchName(str(base)), hard=False),
-            _FailIfNotDirty(self.repo, BranchName(active_branch.name), self.main_branch),
-            AddAll(self.repo),
-            Commit(self.repo, self.commit_message, skip_hooks=self.skip_hooks),
-        ])
+        self.event_manager.dispatch_event(GitActionWasExecuted(self.__class__, 'Squashing all commits into one'))
+
+        self.__commands = ComposedGitActions(
+            [
+                Reset(self.repo, BranchName(str(base)), hard=False),
+                _FailIfNotDirty(
+                    self.repo,
+                    BranchName(active_branch.name),
+                    self.main_branch,
+                    event_manager=self.event_manager
+                ),
+                AddAll(self.repo),
+                Commit(self.repo, self.commit_message, skip_hooks=self.skip_hooks),
+            ]
+        )
 
         self.__commands.execute()
 

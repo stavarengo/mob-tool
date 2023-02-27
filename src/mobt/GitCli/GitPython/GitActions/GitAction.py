@@ -20,30 +20,19 @@ class GitAction(ABC):
 
     def execute(self) -> UndoCommand:
         if self.__execution_control.executed:
-            raise ActionAlreadyExecuted.create(self)
+            raise ActionAlreadyExecuted.create(self.__class__.__name__)
 
         try:
             self._execute()
             return UndoCallable(self.undo)
         except Exception as e:
-            # if not getattr(e, "already_logged", False):
-            #     e.already_logged = True
-            #     msg = str(e)
-            #     if isinstance(e, GitCommandError):
-            #         stderr = (e.stderr and e.stderr.strip() or "").removeprefix("stderr: ").strip("'")
-            #         max_stderr_len = 40
-            #         if len(stderr) > max_stderr_len:
-            #             stderr = stderr.replace("\n", " ")[:max_stderr_len] + "..."
-            #         msg = f'Git command failed with exit code "{e.status}" and stderr "{stderr}"'
-
-            # git_logger().error(f"Failed: {msg}")
             raise e
         finally:
             self.__execution_control.executed = True
 
     def undo(self):
         if self.__execution_control.undo:
-            raise ActionAlreadyUndo.create(self)
+            raise ActionAlreadyUndo.create(self.__class__.__name__)
 
         try:
             self._undo()

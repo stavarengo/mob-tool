@@ -2,9 +2,11 @@ from dataclasses import dataclass
 
 from git import GitCommandError, Repo
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitPython.GitActions.Exceptions import NonFastForwardPush
 from mobt.GitCli.GitPython.GitActions.GitAction import GitAction
+from mobt.GitCli.GitPython.GitActions.GitActionWasExecuted import GitActionWasExecuted
 
 
 @dataclass(frozen=False)
@@ -12,6 +14,7 @@ class _PullRequestData:
     term: str
     create_url: str
     view_url: str
+    event_manager: EventManager
 
     def __str__(self):
         return f'Create new {self.term}: {self.create_url}'
@@ -28,6 +31,7 @@ class _PushUndoContext:
 class Push(GitAction):
     repo: Repo
     branch_to_push: BranchName
+    event_manager: EventManager
     force: bool = False
 
     def __post_init__(self):
@@ -36,6 +40,14 @@ class Push(GitAction):
 
     def _execute(self) -> None:
         branch = self.repo.branches[self.branch_to_push]
+
+        self.event_manager.dispatch_event(
+            GitActionWasExecuted(
+                self.__class__,
+                f'Pushing "{self.branch_to_push}" to "origin/{self.branch_to_push}"'
+            )
+        )
+
         if not branch.tracking_branch():
             self._create_upstream()
             self.__context.unset_upstream = True

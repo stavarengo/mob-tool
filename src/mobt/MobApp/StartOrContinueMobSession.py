@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from git import GitError, Repo
+from git import GitError
 from injector import inject
 
+from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.GitCliWithAutoRollback import GitCliWithAutoRollback
 from mobt.MobApp.ContinueMobSession import ContinueMobSession
+from mobt.MobApp.MobAppRelevantOperationHappened import MobAppRelevantOperationHappened
 from mobt.MobApp.StartNewMobSession import StartNewMobSession
 from mobt.MobException import MobException
 from mobt.SessionSettings import SessionSettings
@@ -21,6 +23,7 @@ class StartOrContinueMobSession:
     continue_mob_session: ContinueMobSession
     start_mob_session: StartNewMobSession
     session_settings_services: SessionSettingsService
+    event_manager: EventManager
 
     def execute(
         self,
@@ -37,6 +40,11 @@ class StartOrContinueMobSession:
             branch_name = branch_name or self.git.current_branch()
 
             if self.git.branch_exists(branch_name):
+                human_log = f'Checking out branch "{branch_name}"'
+                remote_branch = self.git.get_remote_branch(branch_name)
+                if remote_branch:
+                    human_log += f' (tracking "{remote_branch.name}"))'
+                self.event_manager.dispatch_event(MobAppRelevantOperationHappened(human_log=f'{human_log}...'))
                 self.git.checkout(branch_name)
                 self.git.pull_with_rebase()
                 if self.session_settings_services.find():

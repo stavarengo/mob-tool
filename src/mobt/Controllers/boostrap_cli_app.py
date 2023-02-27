@@ -14,7 +14,8 @@ def _check_for_new_version():
             from mobt import echo
             echo(
                 f'Never version available: {version.last_available_version} (installed version: {version.installed_version})',
-                fg='bright_yellow')
+                fg='bright_yellow'
+            )
     except Exception as e:
         mob_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
 
@@ -34,3 +35,16 @@ def bootstrap_cli_app(log_level: int, check_for_new_version: bool = True):
 
     if check_for_new_version:
         _check_for_new_version()
+
+    from mobt.EventSystem.EventManager import EventManager
+    from mobt.GitCli.GitPython.GitActions.GitActionWasExecuted import GitActionWasExecuted
+    from mobt.MobApp.MobAppRelevantOperationHappened import MobAppRelevantOperationHappened
+    from mobt.di import di
+
+    def _listener(event: MobAppRelevantOperationHappened):
+        from mobt import echo
+        from mobt.Logging.color_by_log_level import color_by_log_level_int
+        echo(event.human_log, fg=color_by_log_level_int(None))
+
+    di.get(EventManager).add_listener(MobAppRelevantOperationHappened, _listener)
+    di.get(EventManager).add_listener(GitActionWasExecuted, _listener)
