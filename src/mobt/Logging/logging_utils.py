@@ -10,10 +10,12 @@ def setup_logging():
     __setup_logging = True
 
     from mobt.Logging.LogHandler import LogHandler
+    from mobt.Logging.Filter import Filter
     from mobt.Logging.Formatter import Formatter
 
     handler = LogHandler()
     handler.setFormatter(Formatter())
+    handler.addFilter(Filter())
 
     # from mobt import mob_logger
     logging.getLogger().addHandler(handler)
