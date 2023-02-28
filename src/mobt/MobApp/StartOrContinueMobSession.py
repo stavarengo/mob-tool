@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from git import GitError
 from injector import inject
 
 from mobt.EventSystem.EventManager import EventManager
@@ -61,6 +60,7 @@ class StartOrContinueMobSession:
             )
         except Exception as e:
             self.git.undo()
+            from git import GitError
 
             if isinstance(e, GitError):
                 e = MobException(str(e))

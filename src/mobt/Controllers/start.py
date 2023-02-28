@@ -79,6 +79,8 @@ def start(
         # We need to convert it to a list of TeamMemberName
         members = TeamMembers([TeamMemberName(n.strip()) for n in members.split(',') if n and n.strip()])
 
+    from mobt.MobApp.StartOrContinueMobSession import StartOrContinueMobSession
+
     start_or_continue = di.get(StartOrContinueMobSession)
     session_settings = start_or_continue.execute(
         branch_name=branch_name,

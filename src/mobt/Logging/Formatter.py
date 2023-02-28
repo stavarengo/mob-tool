@@ -8,4 +8,9 @@ class Formatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         import click
 
-        return click.style(f"{super().format(record)}", fg=color_by_log_level(record))
+        if record.name == 'git.cmd' and record.args[0]:
+            msg = " ".join(record.args[0])
+        else:
+            msg = super().format(record)
+
+        return click.style(msg, fg=color_by_log_level(record))

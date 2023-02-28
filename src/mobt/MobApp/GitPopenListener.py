@@ -24,6 +24,7 @@ class GitPopenListener(PopenListener):
         msg = " ".join(command)
         from mobt.MobApp import mob_app_logger
 
+        whole_output = ((stdout or "") + (stderr or "")).strip()
         if self._is_git_command(command):
             from mobt import echo
 
@@ -32,8 +33,6 @@ class GitPopenListener(PopenListener):
             else:
                 mob_app_logger().info(msg)
 
-            whole_output = stdout + stderr
-
             if self._is_git_push_command(command):
                 pull_request_url = self._get_pul_request_url(whole_output)
                 if pull_request_url:
@@ -41,12 +40,12 @@ class GitPopenListener(PopenListener):
                         f'To {pull_request_url.action} {pull_request_url.term}, visit:\n   {pull_request_url.url}',
                         fg='bright_blue'
                     )
-
-            mob_app_logger().debug(whole_output)
         else:
             mob_app_logger().debug(msg)
-            whole_output = stdout + stderr
-            mob_app_logger().debug(whole_output)
+
+        if whole_output:
+            formatted_output = whole_output.replace("\n", "\n   > ")
+            mob_app_logger().debug(f'   > {formatted_output}')
 
     def _is_safe_command(self, command: list) -> bool:
         safe_sub_commands = ['diff', 'fetch', 'version', 'merge-base']
