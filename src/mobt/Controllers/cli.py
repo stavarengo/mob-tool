@@ -5,14 +5,19 @@ import click
 from mobt.Controllers.done import done
 from mobt.Controllers.next import next
 from mobt.Controllers.start import start
+from mobt.Controllers.wip_commit import wip_commit
 
 
 @click.group()
 @click.version_option(package_name='mob-tool')
-@click.option('-v', '--verbose', count=True,
-              help='Enables verbose mode. The more -v options, the more verbose, up to -vv')
-@click.option('-s', '--silent', count=True,
-              help='Disable all output except errors. To disable errors, use -sss')
+@click.option(
+    '-v', '--verbose', count=True,
+    help='Enables verbose mode. The more -v options, the more verbose, up to -vv'
+)
+@click.option(
+    '-s', '--silent', count=True,
+    help='Disable all output except errors. To disable errors, use -sss'
+)
 def cli(verbose, silent):
     log_level = logging.WARNING
 
@@ -41,3 +46,4 @@ def cli(verbose, silent):
 cli.add_command(start, 'start')
 cli.add_command(next, 'next')
 cli.add_command(done, 'done')
+cli.add_command(wip_commit, 'commit')
