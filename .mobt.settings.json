@@ -1,0 +1,16 @@
+{
+  "team": {
+    "members": [
+      "rafa",
+      "ra",
+      "raf"
+    ]
+  },
+  "rotation": {
+    "driverInMinutes": 10,
+    "breakInMinutes": 15,
+    "howManyRotationsBeforeBreak": 5,
+    "howManyRotationsSinceLastBreak": 1
+  },
+  "version": "0.1.0"
+}
