@@ -6,6 +6,7 @@ from mobt.Controllers.done import done
 from mobt.Controllers.next import next
 from mobt.Controllers.start import start
 from mobt.Controllers.wip_commit import wip_commit
+from mobt.Controllers.squash import squash
 
 
 @click.group()
@@ -47,3 +48,4 @@ cli.add_command(start, 'start')
 cli.add_command(next, 'next')
 cli.add_command(done, 'done')
 cli.add_command(wip_commit, 'commit')
+cli.add_command(squash, 'squash')
