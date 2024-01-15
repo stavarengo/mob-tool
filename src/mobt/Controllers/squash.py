@@ -9,7 +9,8 @@ from mobt.GitCli.BranchName import BranchName
 @click.option(
     '--push',
     '-p',
-    help='Push the squashed commit to the remote [Will force push].',
+    is_flag=True,
+    help='Force push the squashed commit to the remote.',
 )
 @click.option(
     '--message',
