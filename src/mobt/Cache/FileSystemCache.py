@@ -4,8 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-import pkg_resources
 import platformdirs
+from importlib.metadata import version, PackageNotFoundError
 from dataclasses_json import config, dataclass_json
 from injector import inject
 from marshmallow import fields
@@ -33,9 +33,14 @@ class CacheEntry:
         return datetime.now() > self.expires_at
 
 
+try:
+    _cache_dir_version = version('mob-tool')
+except PackageNotFoundError:
+    _cache_dir_version = 'unknown'
+
 _cache_dir = platformdirs.user_cache_dir(
     appname='mob-tool',
-    version=pkg_resources.get_distribution('mob-tool').version,
+    version=_cache_dir_version,
 )
 
 
