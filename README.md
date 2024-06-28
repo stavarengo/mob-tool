@@ -72,6 +72,14 @@ Here's an example of the output of the `done` command:
 
 ![Example of mobt done output](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/done-output.png)
 
+## Development Setup
+
+To set up the development environment, follow these steps:
+- Clone the repository
+- Create a virtual environment with `python -m venv venv`.
+- Install the app from the local repository with `pip install -e .`
+
+
 ## FAQ
 
 ### What happens if one of the Git commands fails?
