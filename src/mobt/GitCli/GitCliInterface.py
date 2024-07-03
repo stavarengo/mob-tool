@@ -69,9 +69,25 @@ class GitCliInterface(ABC):
         pass
 
     @abstractmethod
+    def stash_if_dirty(self, stash_name: str) -> UndoCommand:
+        pass
+
+    @abstractmethod
+    def stash_pop(self, stash_name: str) -> UndoCommand:
+        pass
+
+    @abstractmethod
+    def try_stash_pop(self, stash_name: str) -> UndoCommand:
+        pass
+
+    @abstractmethod
     def fail_if_dirty(self):
         pass
 
     @abstractmethod
     def pull_with_rebase(self):
+        pass
+
+    @abstractmethod
+    def if_dirty_propose_stash_or_discard_or_abort(self) -> str|None:
         pass

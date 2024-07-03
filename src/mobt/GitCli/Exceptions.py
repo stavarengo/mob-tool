@@ -10,6 +10,11 @@ class WorkingDirectoryNotClean(MobException):
     def extra_help(self) -> str:
         return "Please clean your work directory before trying again."
 
+class AbortedByUser(MobException):
+    @classmethod
+    def create(cls):
+        return cls("Aborted by user.")
+
 
 class ThereIsNoDifferenceBetweenTheCurrentBranchAndTheMainBranch(MobException):
 

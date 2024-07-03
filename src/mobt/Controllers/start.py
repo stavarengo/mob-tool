@@ -93,8 +93,8 @@ def start(
     last_team_members_service = di.get(LastTeamMembersService)
     last_team_members_service.save_last_team(session_settings.team)
 
-    echo(f'Driver: {session_settings.team.driver}', fg='bright_green')
-    echo(f'Navigator: {session_settings.team.navigator}', fg='bright_green')
+    echo(f'🚙 Driver: {session_settings.team.driver}', fg='bright_green')
+    echo(f'🧭 Navigator: {session_settings.team.navigator}', fg='bright_green')
 
     from mobt.Timer.TimerService import TimerService
     di.get(TimerService).start(session_settings.rotation.driverInMinutes)

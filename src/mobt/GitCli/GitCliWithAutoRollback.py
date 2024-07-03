@@ -57,6 +57,15 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def commit_all_and_push(self, *args, **kwargs) -> UndoCommand:
         return self.__call(self.git.commit_all_and_push, *args, **kwargs)
 
+    def stash_if_dirty(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.stash_if_dirty, *args, **kwargs)
+
+    def stash_pop(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.stash_pop, *args, **kwargs)
+
+    def try_stash_pop(self, *args, **kwargs) -> UndoCommand:
+        return self.__call(self.git.try_stash_pop, *args, **kwargs)
+
     def undo(self):
         self.__undo_command.undo()
 
@@ -69,12 +78,12 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
     def add_undo_command(self, undo_command: UndoCommand):
         self.__undo_command.add_command(undo_command)
 
-    def add_undo_callable(self, c: callable):
-        self.__undo_command.add_command(UndoCallable(c))
-
     @property
     def undo_commands(self) -> ComposedUndoCommand:
         return self.__undo_command
+
+    def add_undo_callable(self, c: callable):
+        self.__undo_command.add_command(UndoCallable(c))
 
     def __call(self, method: Callable, *args, **kwargs):
         result = method(*args, **kwargs)
@@ -84,3 +93,6 @@ class GitCliWithAutoRollback(GitCliInterface, UndoCommand):
 
     def with_manual_roll_back(self) -> GitCliInterface:
         return self.git
+
+    def if_dirty_propose_stash_or_discard_or_abort(self, *args, **kwargs) -> bool:
+        return self.__call(self.git.if_dirty_propose_stash_or_discard_or_abort, *args, **kwargs)

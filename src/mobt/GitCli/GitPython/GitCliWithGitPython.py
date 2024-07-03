@@ -1,13 +1,15 @@
+import datetime
 import typing
 from dataclasses import dataclass
 from typing import Optional
 
+import click
 from git import Head, RemoteReference, Repo
 from injector import inject
 
 from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
-from mobt.GitCli.Exceptions import CanNotFindMainBranch, WorkingDirectoryNotClean
+from mobt.GitCli.Exceptions import CanNotFindMainBranch, WorkingDirectoryNotClean, AbortedByUser
 from mobt.GitCli.GitCliInterface import GitCliInterface, UndoCommand
 from mobt.GitCli.GitPython.GitActions import Fetch
 from mobt.GitCli.GitPython.GitActions.AddAll import AddAll
@@ -17,10 +19,14 @@ from mobt.GitCli.GitPython.GitActions.Commit import Commit
 from mobt.GitCli.GitPython.GitActions.ComposedGitActions import ComposedGitActions
 from mobt.GitCli.GitPython.GitActions.CreateHead import CreateHead
 from mobt.GitCli.GitPython.GitActions.Fetch import Fetch
+from mobt.GitCli.GitPython.GitActions.PermanentlyCleanWorkingDirectory import PermanentlyCleanWorkingDirectory
 from mobt.GitCli.GitPython.GitActions.PullWithRebase import PullWithRebase
 from mobt.GitCli.GitPython.GitActions.Push import Push
 from mobt.GitCli.GitPython.GitActions.Rebase import Rebase
 from mobt.GitCli.GitPython.GitActions.SquashAll import SquashAll
+from mobt.GitCli.GitPython.GitActions.StashIfDirty import StashIfDirty
+from mobt.GitCli.GitPython.GitActions.StashPop import StashPop
+from mobt.GitCli.GitPython.GitActions.TryStashPop import TryStashPop
 
 
 @inject
@@ -105,12 +111,31 @@ class GitCliWithGitPython(GitCliInterface):
             ]
         ).execute()
 
+    def stash_if_dirty(self, stash_name: str) -> UndoCommand:
+        return StashIfDirty(repo=self.repo, stash_name=stash_name, event_manager=self.event_manager).execute()
+
+    def stash_pop(self, stash_name: str) -> UndoCommand:
+        return StashPop(self.repo, stash_name).execute()
+
+    def try_stash_pop(self, stash_name: str) -> UndoCommand:
+        return TryStashPop(repo=self.repo, stash_name=stash_name, event_manager=self.event_manager).execute()
+
     def push(self, force: bool = False) -> UndoCommand:
         return Push(
             self.repo,
             BranchName(self.repo.active_branch.name),
             force=force,
             event_manager=self.event_manager
+        ).execute()
+
+    def fail_if_dirty(self):
+        if self.repo.is_dirty(untracked_files=True):
+            raise WorkingDirectoryNotClean.create()
+
+    def permanently_clean_working_directory(self) -> UndoCommand:
+        return PermanentlyCleanWorkingDirectory(
+            repo=self.repo,
+            event_manager=self.event_manager,
         ).execute()
 
     def commit_all(self, message: str, skip_hooks: bool = False) -> UndoCommand:
@@ -121,9 +146,28 @@ class GitCliWithGitPython(GitCliInterface):
             ]
         ).execute()
 
-    def fail_if_dirty(self):
-        if self.repo.is_dirty(untracked_files=True):
-            raise WorkingDirectoryNotClean.create()
-
     def pull_with_rebase(self):
         return PullWithRebase(self.repo, event_manager=self.event_manager).execute()
+
+    def if_dirty_propose_stash_or_discard_or_abort(self) -> str|None:
+        if not self.repo.is_dirty(untracked_files=True):
+            return
+
+        click.echo('Your working directory is dirty. What would you like to do?')
+        click.echo('s: Stash')
+        click.echo('cw: CleanWorkdirIncludingUntrackedFiles (not reversible)')
+        click.echo('a: Abort (default)')
+        user_choice = click.prompt(
+            '[s/cw/a]',
+        )
+
+        if user_choice == 'stash' or user_choice == 's':
+            current_commit_hexsha = self.repo.active_branch.commit.hexsha
+            stash_name = f'mob-stash-{current_commit_hexsha}-{datetime.datetime.now().timestamp()}'
+            self.stash_if_dirty(stash_name=stash_name)
+            return stash_name
+        elif user_choice == 'CleanWorkdirIncludingUntrackedFiles' or user_choice == 'cw':
+            self.permanently_clean_working_directory()
+            return None
+        else:
+            raise AbortedByUser.create()
