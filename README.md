@@ -79,6 +79,13 @@ To set up the development environment, follow these steps:
 - Create a virtual environment with `python -m venv venv`.
 - Install the app from the local repository with `pip install -e .`
 
+e.g.:
+```
+rm -rfv venv
+python -m venv venv
+source ./venv/bin/activate
+pip install -e .
+```
 
 ## FAQ
 
