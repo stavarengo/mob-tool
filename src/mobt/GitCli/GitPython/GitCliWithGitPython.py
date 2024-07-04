@@ -7,6 +7,7 @@ import click
 from git import Head, RemoteReference, Repo
 from injector import inject
 
+from mobt import echo, prompt
 from mobt.EventSystem.EventManager import EventManager
 from mobt.GitCli.BranchName import BranchName
 from mobt.GitCli.Exceptions import CanNotFindMainBranch, WorkingDirectoryNotClean, AbortedByUser
@@ -153,13 +154,11 @@ class GitCliWithGitPython(GitCliInterface):
         if not self.repo.is_dirty(untracked_files=True):
             return
 
-        click.echo('Your working directory is dirty. What would you like to do?')
-        click.echo('s: Stash')
-        click.echo('cw: CleanWorkdirIncludingUntrackedFiles (not reversible)')
-        click.echo('a: Abort (default)')
-        user_choice = click.prompt(
-            '[s/cw/a]',
-        )
+        echo('Your working directory is dirty. What would you like to do?', fg='yellow')
+        echo('s: Stash', fg='yellow')
+        echo('cw: CleanWorkdirIncludingUntrackedFiles (not reversible)', fg='yellow')
+        echo('a: Abort (default)', fg='yellow')
+        user_choice = prompt('')
 
         if user_choice == 'stash' or user_choice == 's':
             current_commit_hexsha = self.repo.active_branch.commit.hexsha

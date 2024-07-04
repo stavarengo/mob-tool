@@ -5,7 +5,6 @@ import click
 from mobt import echo, prompt
 from mobt.GitCli.BranchName import BranchName
 from mobt.LastTeamMembers.TeamMembers import TeamMembers
-from mobt.MobApp.StartOrContinueMobSession import StartOrContinueMobSession
 from mobt.SessionSettings.SessionSettings import SessionSettings
 
 
@@ -126,6 +125,7 @@ def _final_announcements(session_settings: SessionSettings):
             _(message)
         except Exception as e:
             controllers_logger().error(f'Error while trying to make it speak: {e}')
+            echo(message, fg='blue')
 
     def _show_gui(message: str, on_show: callable = None):
         try:
@@ -138,8 +138,9 @@ def _final_announcements(session_settings: SessionSettings):
                 color=ft.colors.RED_400 if is_it_time_for_break else ft.colors.GREEN_400,
                 on_show=on_show,
             )
-        except Exception as e:
+        except BaseException as e:
             controllers_logger().error(f'Error while trying to show the GUI message: {e}')
+            on_show()
 
     if is_it_time_for_break:
         msg = msg_time_break + "\nDriver after break: " + session_settings.team.next_driver

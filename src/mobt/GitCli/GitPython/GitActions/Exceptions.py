@@ -17,3 +17,13 @@ class NonFastForwardPush(MobException):
     @classmethod
     def create(cls) -> 'NonFastForwardPush':
         return cls("Failed to push: non-fast-forward")
+
+class StashNameAreadyExists(MobException):
+    @classmethod
+    def create(cls, stash_name: str) -> 'StashNameAreadyExists':
+        return cls(f"Stash with name '{stash_name}' already exists.")
+
+class StashNameNotFound(MobException):
+    @classmethod
+    def create(cls, stash_name: str) -> 'StashNameNotFound':
+        return cls(f"Stash with name '{stash_name}' not found.")
