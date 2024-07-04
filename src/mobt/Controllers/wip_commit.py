@@ -1,9 +1,11 @@
 import click
 
 from mobt import echo
+from mobt.Controllers.common_params import common_params
 
 
 @click.command()
+@common_params
 def wip_commit():
     """
     Create a WIP commit with all the local changes and push it.

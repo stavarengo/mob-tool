@@ -1,9 +1,11 @@
 import click
 
 from mobt import echo
+from mobt.Controllers.common_params import common_params
 
 
 @click.command()
+@common_params
 def next():
     """
     Pass the mob to the next team member. You must call this command even if you didn't make any changes in the code.

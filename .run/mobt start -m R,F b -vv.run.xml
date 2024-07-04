@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="mobt start -m R,F b" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="mobt start -m R,F b -vv" type="PythonConfigurationType" factoryName="Python">
     <module name="mob-tool" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -15,7 +15,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/bin/mobt" />
-    <option name="PARAMETERS" value="start -m R,F b" />
+    <option name="PARAMETERS" value="start -m R,F b -vv -sss" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="true" />
     <option name="MODULE_MODE" value="false" />

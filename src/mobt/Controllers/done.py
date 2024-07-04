@@ -1,6 +1,7 @@
 import click
 
 from mobt import echo
+from mobt.Controllers.common_params import common_params
 from mobt.GitCli.BranchName import BranchName
 
 
@@ -18,8 +19,8 @@ from mobt.GitCli.BranchName import BranchName
     help='Rebase all changes after squashing. If the rebase fails, the mob will be ended as usual, but the rebase '
          'will be aborted.',
 )
-@click.pass_context
-def done(ctx, branch_name: BranchName = None, message: str = None, do_not_try_to_rebase: bool = False) -> None:
+@common_params
+def done(branch_name: BranchName = None, message: str = None, do_not_try_to_rebase: bool = False) -> None:
     """
         End the current mob session.
 

@@ -3,6 +3,8 @@ import subprocess
 import click
 
 from mobt import echo, prompt
+
+from mobt.Controllers.common_params import common_params
 from mobt.GitCli.BranchName import BranchName
 from mobt.LastTeamMembers.TeamMembers import TeamMembers
 from mobt.SessionSettings.SessionSettings import SessionSettings
@@ -58,6 +60,7 @@ def __fetch_member_names(reset_members: bool) -> TeamMembers:
     help='Force start a mob session even if the branch already exists and is not a mob branch, turning it into a mob '
          'branch.',
 )
+@common_params
 def start(
     branch_name: BranchName = None, members: str = None, reset_members: bool = False,
     force_if_non_mob_branch: bool = False

@@ -1,6 +1,3 @@
-import logging
-import os
-import sys
 from typing import Union
 
 
@@ -21,18 +18,11 @@ def _check_for_new_version():
         mob_logger().debug(f'Failed to check for new version: {e.__class__.__name__} - {str(e)}')
 
 
-def bootstrap_cli_app(log_level: int, check_for_new_version: bool = True):
-    from mobt.Logging.logging_utils import set_log_level
-    set_log_level(log_level)
-
+def bootstrap_cli_app(check_for_new_version: bool = True):
     from mobt.MobApp.GitPopenListener import GitPopenListener
     from mobt.PopenObserver.PopenWrapper import PopenWrapper
 
     PopenWrapper.add_listener(GitPopenListener())
-
-    if log_level > logging.CRITICAL:
-        sys.stdout = open(os.devnull, 'w')
-        sys.stderr = open(os.devnull, 'w')
 
     if check_for_new_version:
         _check_for_new_version()
