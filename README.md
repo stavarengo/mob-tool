@@ -59,18 +59,46 @@ The next driver (in this example, Erik) can start working by running the same `m
 
 ### Finishing the session when the feature is done
 
-When your feature is ready, you can end the session with the following command:
+When your feature is ready, you can end the current mob session using the `mobt done` command. This command finalizes the work by squashing all commits into a single one, pushing the changes to the remote repository, and removing the mob session file to clean up the session.
 
 ```shell
-mobt done
+mobt done [branch_name] [--message | -m <"commit message">] [--do-not-try-to-rebase]
 ```
 
-This will squash all the commits and push all the changes to the remote. All Git hooks will be executed for this final
-commit. The hooks are always ignored during the `start` and `next` commands.
+- `branch_name` (optional): The name of the branch to process. If not provided, the command defaults to the current mob session branch.
+- `--message` / `-m <"commit message">` (optional): Allows you to specify a custom message for the squashed commit. If omitted, a default commit message will be generated.
+- `--do-not-try-to-rebase` (optional): Use this option to prevent the command from attempting to rebase changes onto the main branch before squashing.
+
+All Git hooks are executed for this final commit, ensuring that your codebase integrity is maintained. Note that Git hooks are always ignored during the `start` and `next` commands.
 
 Here's an example of the output of the `done` command:
 
 ![Example of mobt done output](https://raw.githubusercontent.com/stavarengo/mob-tool/main/docs/done-output.png)
+
+### Squashing commits with `mobt squash`
+
+The `mobt squash` command squashes all commits in the current mob session branch or a specified branch. This is useful when you want to combine all the work done during a mob session into a single, clean commit.
+
+```shell
+mobt squash [branch_name] [--push | -p] [--message | -m <"commit message">] [--do-not-try-to-rebase]
+```
+
+- `branch_name` (optional): The name of the branch to squash. If not provided, the current mob session branch will be used.
+- `--push` / `-p` (optional): Force push the squashed commit to the remote repository.
+- `--message` / `-m <"commit message">` (optional): Provides a custom message for the squashed commit. If not provided, a default message will be generated.
+- `--do-not-try-to-rebase` (optional): Disables the default behavior of attempting to rebase changes on top of the main branch before squashing.
+
+Git hooks are executed for the final squashed commit.
+
+### Saving changes with `mobt wip_commit`
+
+The `mobt wip_commit` command creates a "Work In Progress" (WIP) commit with all your current local changes and pushes it to the remote repository. This is particularly useful for saving your work without formally passing the driver role or when you need to share your changes with the team quickly.
+
+```shell
+mobt wip_commit
+```
+
+This command helps ensure that no work is lost and that all changes are versioned, even if they are not yet ready to be merged.
 
 ## Development Setup
 
