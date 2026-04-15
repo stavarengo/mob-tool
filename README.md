@@ -102,17 +102,29 @@ This command helps ensure that no work is lost and that all changes are versione
 
 ## Development Setup
 
-To set up the development environment, follow these steps:
-- Clone the repository
-- Create a virtual environment with `python -m venv venv`.
-- Install the app from the local repository with `pip install -e .`
-
-e.g.:
+**Prerequisites:** Install [UV](https://docs.astral.sh/uv/):
+```shell
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
-rm -rfv venv
-python -m venv venv
-source ./venv/bin/activate
-pip install -e .
+
+To set up the development environment:
+```shell
+git clone https://github.com/stavarengo/mob-tool.git
+cd mob-tool
+uv sync
+```
+
+`uv sync` creates the virtual environment and installs all dependencies (including an editable install of the project).
+
+To run the tool:
+```shell
+uv run mobt --help
+```
+
+Alternatively, activate the virtual environment directly:
+```shell
+source .venv/bin/activate
+mobt --help
 ```
 
 ## FAQ
